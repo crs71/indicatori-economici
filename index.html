@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ce înseamnă cursul valutar pentru un student? | Traducător de Indicatori</title>
+  <meta name="description" content="Un instrument de scrollytelling care traduce cursul oficial BNR (EUR/RON) în impact concret pentru viața de zi cu zi a unui student.">
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+
+  <div class="scroll-progress-bar" id="scrollProgressBar"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo-badge">
+        <span class="logo-dot"></span>
+        <span>Traducător de Indicatori</span>
+      </div>
+      <div class="header-status">
+        <span class="status-indicator"></span>
+        <span id="dataStatusText">Conectare flux oficial BNR...</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro-section">
+      <span class="eyebrow">Cibernetică Economică • Portofoliu Personal</span>
+      <h1 class="intro-title">Ce înseamnă cursul valutar când ești student?</h1>
+      <p class="intro-lead">
+        În loc de un grafic rece din buletinele de știri, am tradus cotația oficială a Băncii Naționale a României pe ultimele 10 zile bancare în consecințe reale: de la abonamentul de streaming până la plata chiriei sau comanda unui manual.
+      </p>
+      <div class="scroll-hint">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+        </svg>
+        <span>Derulează pentru a desface povestea cifrelor</span>
+      </div>
+    </section>
+
+    <section class="scrolly-container" id="scrollyStage">
+      <div class="scrolly-story">
+
+        <article class="step" data-step="step-intro">
+          <div class="step-card">
+            <span class="step-tag">Pasul 01 • Cifra Oficială</span>
+            <h2 class="step-title">O cifră cu 4 zecimale</h2>
+            <p class="step-body">
+              Aceasta este cotația de referință publicată de BNR la ora 13:00. În statistici arată ca o simplă constantă matematică. Dar în economie, fiecare zecimală reprezintă un punct de ancoră pentru toate prețurile importate sau cotate în euro.
+            </p>
+            <div class="step-insight">
+              <strong>De reținut:</strong> Cursul BNR nu este un curs comercial de la ghișeu, ci media ponderată a tranzacțiilor din piața valutară interbancară.
+            </div>
+          </div>
+        </article>
+
+        <article class="step" data-step="step-variation">
+          <div class="step-card">
+            <span class="step-tag">Pasul 02 • Dinamica pe 10 Zile</span>
+            <h2 class="step-title" id="step2Title">O creștere de +0,26% în 10 zile</h2>
+            <p class="step-body" id="step2Body">
+              La începutul intervalului, un euro era cotat diferit față de azi. Diferența netă pe 10 zile bancare se actualizează din fluxul BNR.
+            </p>
+            <div class="step-insight" id="step2Insight">
+              <strong>Ce înseamnă în economie:</strong> O variație de câteva zecimi de procent în 10 zile reflectă fluxurile comerciale și stabilitatea asigurată de banca centrală.
+            </div>
+          </div>
+        </article>
+
+        <article class="step" data-step="step-sub">
+          <div class="step-card">
+            <span class="step-tag">Pasul 03 • Traducere: Cheltuieli Mici</span>
+            <h2 class="step-title" id="step3Title">Abonamentul tău digital (10 €)</h2>
+            <p class="step-body" id="step3Body">
+              Dacă plătești un serviciu facturat în euro (~10 €), diferența în lei pe 10 zile este de obicei sub un leu pe lună.
+            </p>
+            <div class="step-insight" id="step3Insight">
+              <strong>Impact concret:</strong> La sume mici, fluctuația e neglijabilă în bugetul lunar.
+            </div>
+          </div>
+        </article>
+
+        <article class="step" data-step="step-books">
+          <div class="step-card">
+            <span class="step-tag">Pasul 04 • Traducere: Achiziții Medii</span>
+            <h2 class="step-title" id="step4Title">Comanda de cărți sau hardware (50 €)</h2>
+            <p class="step-body" id="step4Body">
+              Pentru un manual sau o licență de ~50 €, diferența absolută pe 10 zile rămâne de ordinul unui leu.
+            </p>
+            <div class="step-insight" id="step4Insight">
+              <strong>Traducere:</strong> Fluctuația nu justifică de obicei amânarea achiziției.
+            </div>
+          </div>
+        </article>
+
+        <article class="step" data-step="step-rent">
+          <div class="step-card">
+            <span class="step-tag">Pasul 05 • Traducere: Sume Majore</span>
+            <h2 class="step-title" id="step5Title">Chiria sau bursa de mobilitate (300 €)</h2>
+            <p class="step-body" id="step5Body">
+              La ~300 € (chirie sau bursă), zecimalele cursului încep să se simtă în bugetul lunar.
+            </p>
+            <div class="step-insight" id="step5Insight">
+              <strong>Concluzie:</strong> La sume mari, zecimalele contează.
+            </div>
+          </div>
+        </article>
+
+        <!-- Pas nou: pragul de relevanță -->
+        <article class="step" data-step="step-threshold">
+          <div class="step-card">
+            <span class="step-tag">Pasul 06 • Pragul de relevanță</span>
+            <h2 class="step-title">Când merită să urmărești cursul?</h2>
+            <p class="step-body">
+              O regulă practică pentru student: sub ~50 € pe lună, variațiile pe 10 zile sunt zgomot. Peste ~200–300 € (chirie, taxe, mobilitate), merită să verifici cursul înainte de un transfer mare.
+            </p>
+            <div class="step-insight">
+              <strong>Prag orientativ:</strong> dacă diferența pe 10 zile depășește costul unei mese la cantină, e semnal util — altfel, ignoră micro-mișcările.
+            </div>
+          </div>
+        </article>
+
+        <!-- Pas nou: comparație valute -->
+        <article class="step" data-step="step-compare">
+          <div class="step-card">
+            <span class="step-tag">Pasul 07 • EUR vs USD vs GBP</span>
+            <h2 class="step-title">Aceeași sumă, trei valute</h2>
+            <p class="step-body">
+              Comută EUR / USD / GBP din panoul din dreapta. Scenariile (abonament, unelte, certificări) se rescriu automat — vezi care valută te lovește mai tare pe 10 zile.
+            </p>
+            <div class="step-insight">
+              <strong>Exercițiu:</strong> alege 100 unități în fiecare valută și compară diferența în lei. Nu toate valutele se mișcă la fel în același interval.
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <div class="scrolly-visual-wrapper">
+        <div class="sticky-display" id="stickyDisplay">
+          <div class="display-header">
+            <div>
+              <div class="header-top-row">
+                <span class="currency-pair" id="currencyPairLabel">1 EUR / RON • BNR</span>
+                <div class="currency-switcher" id="currencySwitcher" role="tablist" aria-label="Alege valuta">
+                  <button type="button" class="curr-btn is-active" data-curr="EUR" title="Euro">EUR</button>
+                  <button type="button" class="curr-btn" data-curr="USD" title="Dolar American">USD</button>
+                  <button type="button" class="curr-btn" data-curr="GBP" title="Liră Sterlină">GBP</button>
+                </div>
+              </div>
+              <div class="data-date tabular" id="displayDate">—</div>
+            </div>
+            <div class="timeline-tracker" title="Progres pași narațiune">
+              <span class="step-dot is-active" data-dot="step-intro" title="Pasul 1"></span>
+              <span class="step-dot" data-dot="step-variation" title="Pasul 2"></span>
+              <span class="step-dot" data-dot="step-sub" title="Pasul 3"></span>
+              <span class="step-dot" data-dot="step-books" title="Pasul 4"></span>
+              <span class="step-dot" data-dot="step-rent" title="Pasul 5"></span>
+              <span class="step-dot" data-dot="step-threshold" title="Pasul 6"></span>
+              <span class="step-dot" data-dot="step-compare" title="Pasul 7"></span>
+            </div>
+          </div>
+
+          <div class="rate-hero">
+            <div class="rate-number-wrap">
+              <span class="rate-large tabular" id="displayRate">—</span>
+              <span class="rate-unit">lei</span>
+            </div>
+            <div class="rate-delta-badge" id="displayDeltaBadge">
+              <span>—</span>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-header">
+              <span>Evoluție 10 ședințe bancare</span>
+              <span class="tabular" id="chartRangeLabel">—</span>
+            </div>
+            <svg class="sparkline-svg" id="sparklineSvg" viewBox="0 0 340 90" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#2563eb" stop-opacity="0.4"/>
+                  <stop offset="100%" stop-color="#2563eb" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path class="sparkline-area" id="sparklineArea" d=""/>
+              <path class="sparkline-path" id="sparklinePath" d=""/>
+              <g id="sparklinePoints"></g>
+            </svg>
+            <div class="chart-dates-footer">
+              <span id="chartStartDate">—</span>
+              <span id="chartEndDate">—</span>
+            </div>
+          </div>
+
+          <div class="lens-container" id="dynamicLens">
+            <span class="lens-label" id="lensLabel">Perspectivă curentă</span>
+            <div class="lens-main-val tabular" id="lensValue">—</div>
+            <p class="lens-detail" id="lensDetail">Derulează pașii pentru context.</p>
+            <div class="lens-comparison" id="lensComparison">
+              <div class="comparison-track">
+                <div class="comp-bar-base" id="compBarBase" style="width: 98%;"></div>
+                <div class="comp-bar-diff" id="compBarDiff" style="width: 2%;"></div>
+              </div>
+              <div class="comparison-legend">
+                <span class="leg-item"><span class="dot-base"></span> <span id="legBase">—</span></span>
+                <span class="leg-item"><span class="dot-diff"></span> <span id="legDiff">—</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="calculator-section">
+      <div class="calculator-card">
+        <h2 class="calc-title">Calculează pentru orice sumă proprie</h2>
+        <p class="calc-subtitle">
+          Ai o cheltuială în valută? Introdu suma și vezi diferența în lei față de începutul celor 10 zile bancare.
+        </p>
+        <div class="calc-controls">
+          <div class="calc-input-row">
+            <div class="calc-input-wrapper">
+              <input type="number" id="calcInput" class="calc-input tabular" value="10" min="1" max="5000" step="1">
+              <span class="calc-currency-symbol" id="calcCurrencySymbol">€</span>
+            </div>
+            <div class="calc-preset-chips" id="calcPresetChips">
+              <button type="button" class="chip-btn" data-val="10">10</button>
+              <button type="button" class="chip-btn" data-val="25">25</button>
+              <button type="button" class="chip-btn" data-val="50">50</button>
+              <button type="button" class="chip-btn" data-val="100">100</button>
+              <button type="button" class="chip-btn" data-val="300">300</button>
+              <button type="button" class="chip-btn" data-val="500">500</button>
+            </div>
+          </div>
+          <input type="range" id="calcSlider" class="calc-slider" min="5" max="1000" step="5" value="10">
+        </div>
+        <div class="calc-results-grid">
+          <div class="result-item">
+            <span class="result-label">Cost la startul celor 10 zile</span>
+            <span class="result-val tabular" id="resStartCost">—</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Cost la cursul de azi</span>
+            <span class="result-val tabular" id="resCurrentCost">—</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Diferența în lei</span>
+            <span class="result-val tabular diff-highlight" id="resDiffCost">—</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="context-section">
+      <div class="context-box">
+        <h3 class="context-title">De ce am creat acest instrument?</h3>
+        <p class="context-text">
+          Urmează să încep anul 1 la ASE (Cibernetică Economică). Acest instrument traduce indicatorii din buletine în impact pe bugetul de student.
+        </p>
+        <p class="context-text">
+          O variație de 0,1%–0,5% pare mică în știri; în lei, la chirii și burse, devine vizibilă.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Traducător de Indicatori Economici • Proiect de portofoliu</p>
+    <p class="footer-credits">
+      Student CSIE – Cibernetică Economică • ASE București<br>
+      Date: flux public BNR (curs.bnr.ro).
+    </p>
+  </footer>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
