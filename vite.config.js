@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   server: {
@@ -7,17 +7,19 @@ export default defineConfig({
       '/api/curs': {
         target: 'https://curs.bnr.ro',
         changeOrigin: true,
-        rewrite: (path) => '/nbrfxrates10days.xml',
-        configure: (proxy) => {
-          proxy.on('proxyRes', (proxyRes) => {
-            proxyRes.headers['access-control-allow-origin'] = '*'
-          })
-        }
-      }
-    }
+        rewrite: () => '/nbrfxrates10days.xml',
+        headers: {
+          'User-Agent': 'Traducator-Indicatori-ASE/1.0',
+        },
+      },
+      '/api/bnr': {
+        target: 'https://curs.bnr.ro',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/bnr/, ''),
+        headers: {
+          'User-Agent': 'Traducator-Indicatori-ASE/1.0',
+        },
+      },
+    },
   },
-  build: {
-    outDir: 'dist',
-    assetsDir: 'assets'
-  }
-})
+});
