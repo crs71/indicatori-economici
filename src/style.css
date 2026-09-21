@@ -19,7 +19,7 @@
   --radius-lg: 16px;
   --transition-smooth: 0.25s ease;
   --font: "Inter", system-ui, -apple-system, sans-serif;
-  --header-h: 3.25rem;
+  --header-h: 3.5rem;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -41,7 +41,7 @@ body {
 
 .site-header {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(248,250,252,.97); backdrop-filter: blur(10px);
+  background: rgba(248,250,252,.98); backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border-subtle);
 }
 .header-inner {
@@ -83,11 +83,13 @@ body {
   padding: 0.85rem 1rem; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 0.95rem;
 }
 
+/* Desktop: sticky sub header, cu offset generos */
 .scrolly-visual-wrapper {
   position: sticky;
-  top: calc(var(--header-h) + 0.75rem);
+  top: calc(var(--header-h) + 1.25rem);
   height: fit-content;
   z-index: 40;
+  padding-top: 0.25rem;
 }
 .sticky-display {
   background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
@@ -184,30 +186,36 @@ body {
 }
 .footer-credits { margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-light); }
 
-/* Tablet / mobil: panoul NU mai e sticky — evită suprapunerea cu headerul */
-@media (max-width: 900px) {
-  :root { --header-h: 3.5rem; }
-
-  .header-inner { padding: 0.5rem 1rem; flex-wrap: nowrap; }
-  .logo-badge { font-size: 0.85rem; }
-  .header-status { font-size: 0.7rem; max-width: 50%; line-height: 1.3; }
-
-  .scrolly-container { grid-template-columns: 1fr; gap: 1.25rem; }
-  .scrolly-story { order: 1; padding-bottom: 4rem; }
-
+/*
+ * Sub ~1100px: o coloană, panoul NU e sticky.
+ * Astfel textul pașilor nu trece pe sub card și nu se lipește de header.
+ */
+@media (max-width: 1100px) {
+  .scrolly-container {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .scrolly-story {
+    order: 1;
+    padding-bottom: 4rem;
+  }
   .scrolly-visual-wrapper {
-    position: relative; /* nu sticky pe mobil */
-    top: auto;
+    position: relative !important;
+    top: auto !important;
     order: -1;
-    max-height: none;
     z-index: 1;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    padding-top: 0;
+    max-height: none;
   }
   .sticky-display {
     padding: 1rem 1.1rem;
     max-height: none;
     overflow: visible;
   }
+  .header-inner { padding: 0.5rem 1rem; }
+  .logo-badge { font-size: 0.85rem; }
+  .header-status { font-size: 0.7rem; max-width: 50%; line-height: 1.3; }
   .rate-large { font-size: 2.1rem; }
   .sparkline-svg { height: 80px; }
   .step { min-height: 0; padding-bottom: 1.25rem; }
@@ -224,12 +232,6 @@ body {
 @media (max-width: 480px) {
   .sticky-display { padding: 0.85rem 0.9rem; }
   .rate-large { font-size: 1.85rem; }
-  .header-status span:last-child {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
