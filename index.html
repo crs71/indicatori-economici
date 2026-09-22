@@ -187,27 +187,35 @@
             </div>
           </div>
 
-          <div class="chart-container">
-            <div class="chart-header">
-              <span>Evoluție 10 ședințe bancare</span>
-              <span class="tabular" id="chartRangeLabel">—</span>
+          <!-- Mobil: graficul e închis în dropdown; desktop: deschis permanent -->
+          <details class="chart-details" id="chartDetails">
+            <summary class="chart-summary">
+              <span class="chart-summary-label">Evoluție 10 ședințe bancare</span>
+              <span class="chart-summary-hint" id="chartRangeLabelSummary">—</span>
+              <span class="chart-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="chart-container">
+              <div class="chart-header chart-header-desktop">
+                <span>Evoluție 10 ședințe bancare</span>
+                <span class="tabular" id="chartRangeLabel">—</span>
+              </div>
+              <svg class="sparkline-svg" id="sparklineSvg" viewBox="0 0 340 90" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#2563eb" stop-opacity="0.4"/>
+                    <stop offset="100%" stop-color="#2563eb" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <path class="sparkline-area" id="sparklineArea" d=""/>
+                <path class="sparkline-path" id="sparklinePath" d=""/>
+                <g id="sparklinePoints"></g>
+              </svg>
+              <div class="chart-dates-footer">
+                <span id="chartStartDate">—</span>
+                <span id="chartEndDate">—</span>
+              </div>
             </div>
-            <svg class="sparkline-svg" id="sparklineSvg" viewBox="0 0 340 90" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stop-color="#2563eb" stop-opacity="0.4"/>
-                  <stop offset="100%" stop-color="#2563eb" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <path class="sparkline-area" id="sparklineArea" d=""/>
-              <path class="sparkline-path" id="sparklinePath" d=""/>
-              <g id="sparklinePoints"></g>
-            </svg>
-            <div class="chart-dates-footer">
-              <span id="chartStartDate">—</span>
-              <span id="chartEndDate">—</span>
-            </div>
-          </div>
+          </details>
 
           <div class="lens-container" id="dynamicLens">
             <span class="lens-label" id="lensLabel">Perspectivă curentă</span>
