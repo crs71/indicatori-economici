@@ -25,24 +25,26 @@ function animateNumber(element, targetNum, formatFn, duration = 450) {
   requestAnimationFrame(frame);
 }
 
-function updateMobileDock(currData) {
-  const dock = document.getElementById('mobileRateDock');
-  if (!dock) return;
-  dock.hidden = false;
-  const pair = document.getElementById('dockPair');
-  const rate = document.getElementById('dockRate');
-  const delta = document.getElementById('dockDelta');
-  if (pair) pair.textContent = `${activeCurrency}/RON`;
-  if (rate) rate.textContent = `${currData.currentRate.toFixed(4)} lei`;
-  if (delta) {
-    const isUp = currData.delta10Days > 0;
-    const isNeutral = Math.abs(currData.delta10Days) < 0.0001;
-    const sign = isUp ? '+' : '';
-    delta.className = `dock-delta ${isUp ? 'up' : isNeutral ? '' : 'down'}`;
-    delta.textContent = isNeutral
-      ? '0%'
-      : `${sign}${currData.percentChange10Days.toFixed(2)}%`;
+function syncChartDetailsOpen() {
+  const details = document.getElementById('chartDetails');
+  if (!details) return;
+  // Desktop: grafic mereu vizibil; mobil: închis implicit (dropdown)
+  if (window.matchMedia('(min-width: 1101px)').matches) {
+    details.open = true;
+  } else if (!details.dataset.userToggled) {
+    details.open = false;
   }
+}
+
+function initChartDetails() {
+  const details = document.getElementById('chartDetails');
+  if (!details) return;
+  details.addEventListener('toggle', () => {
+    details.dataset.userToggled = '1';
+    if (details.open) triggerSparklineAnimation();
+  });
+  syncChartDetailsOpen();
+  window.addEventListener('resize', syncChartDetailsOpen);
 }
 
 function initScrollProgress() {
@@ -109,8 +111,11 @@ function renderSparkline(history) {
       pointsGroup.appendChild(circle);
     });
   }
+  const rangeText = `min: ${min.toFixed(4)} • max: ${max.toFixed(4)}`;
   const rangeLabel = document.getElementById('chartRangeLabel');
-  if (rangeLabel) rangeLabel.textContent = `min: ${min.toFixed(4)} • max: ${max.toFixed(4)}`;
+  const rangeSummary = document.getElementById('chartRangeLabelSummary');
+  if (rangeLabel) rangeLabel.textContent = rangeText;
+  if (rangeSummary) rangeSummary.textContent = rangeText;
 }
 
 function triggerSparklineAnimation() {
@@ -254,7 +259,6 @@ function setCurrency(newCurrency) {
     const sign = isUp ? '+' : '';
     badge.innerHTML = `<span>${sign}${currData.delta10Days.toFixed(4)} lei (${sign}${currData.percentChange10Days.toFixed(2)}%) în 10 zile</span>`;
   }
-  updateMobileDock(currData);
   renderSparkline(currData.history);
   triggerSparklineAnimation();
   updateStoryTexts(currData, translationsData);
@@ -351,6 +355,7 @@ async function initApp() {
   initTimelineNavigation();
   initCurrencySwitcher();
   initCalculator();
+  initChartDetails();
   try {
     exchangeData = await getExchangeRateData();
     if (statusText) {
