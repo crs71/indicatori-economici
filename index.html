@@ -3,13 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ce înseamnă cursul valutar pentru un student? | Traducător de Indicatori</title>
-  <meta name="description" content="Un instrument de scrollytelling care traduce cursul oficial BNR (EUR/RON) în impact concret pentru viața de zi cu zi a unui student.">
+  <title>Rate Story – Ce înseamnă cursul valutar pentru un student?</title>
+  <meta name="description" content="Scrollytelling: ultimele 10 zile bancare EUR/USD/GBP de la BNR, traduse în impact pe abonamente, cărți și chirii pentru studenți.">
+  <link rel="canonical" href="https://rate-story.pages.dev/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#2563eb">
+
+  <!-- Open Graph / social preview -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rate-story.pages.dev/">
+  <meta property="og:title" content="Rate Story – cursul BNR pe înțelesul studentului">
+  <meta property="og:description" content="Ultimele 10 zile bancare EUR/USD/GBP, traduse în impact real: abonamente, cărți, chirii. Date live de la BNR.">
+  <meta property="og:image" content="https://rate-story.pages.dev/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="ro_RO">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Rate Story – cursul BNR pe înțelesul studentului">
+  <meta name="twitter:description" content="Ultimele 10 zile bancare EUR/USD/GBP, traduse în impact real pentru studenți. Date live BNR.">
+  <meta name="twitter:image" content="https://rate-story.pages.dev/og-image.png">
+
   <link rel="stylesheet" href="./src/style.css">
 </head>
 <body>
 
   <div class="scroll-progress-bar" id="scrollProgressBar"></div>
+
+  <!-- Mini dock mobil: curs + delta, rămâne vizibil la scroll -->
+  <div class="mobile-rate-dock" id="mobileRateDock" hidden>
+    <span class="dock-pair" id="dockPair">EUR/RON</span>
+    <span class="dock-rate tabular" id="dockRate">—</span>
+    <span class="dock-delta" id="dockDelta">—</span>
+  </div>
 
   <header class="site-header">
     <div class="header-inner">
@@ -107,7 +132,6 @@
           </div>
         </article>
 
-        <!-- Pas nou: pragul de relevanță -->
         <article class="step" data-step="step-threshold">
           <div class="step-card">
             <span class="step-tag">Pasul 06 • Pragul de relevanță</span>
@@ -121,7 +145,6 @@
           </div>
         </article>
 
-        <!-- Pas nou: comparație valute -->
         <article class="step" data-step="step-compare">
           <div class="step-card">
             <span class="step-tag">Pasul 07 • EUR vs USD vs GBP</span>
