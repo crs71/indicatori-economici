@@ -25,6 +25,26 @@ function animateNumber(element, targetNum, formatFn, duration = 450) {
   requestAnimationFrame(frame);
 }
 
+function updateMobileDock(currData) {
+  const dock = document.getElementById('mobileRateDock');
+  if (!dock) return;
+  dock.hidden = false;
+  const pair = document.getElementById('dockPair');
+  const rate = document.getElementById('dockRate');
+  const delta = document.getElementById('dockDelta');
+  if (pair) pair.textContent = `${activeCurrency}/RON`;
+  if (rate) rate.textContent = `${currData.currentRate.toFixed(4)} lei`;
+  if (delta) {
+    const isUp = currData.delta10Days > 0;
+    const isNeutral = Math.abs(currData.delta10Days) < 0.0001;
+    const sign = isUp ? '+' : '';
+    delta.className = `dock-delta ${isUp ? 'up' : isNeutral ? '' : 'down'}`;
+    delta.textContent = isNeutral
+      ? '0%'
+      : `${sign}${currData.percentChange10Days.toFixed(2)}%`;
+  }
+}
+
 function initScrollProgress() {
   const bar = document.getElementById('scrollProgressBar');
   if (!bar) return;
@@ -121,7 +141,7 @@ function updateComparisonVisual(baseVal, diffVal, isUp) {
   if (compContainer) compContainer.style.opacity = '1';
   const absDiff = Math.abs(diffVal);
   const total = baseVal + absDiff;
-  const visualDiffPct = Math.max(3, Math.min(25, (absDiff / total) * 100 * 4));
+  const visualDiffPct = Math.max(4, Math.min(22, (absDiff / total) * 100 * 4));
   compBarBase.style.width = `${100 - visualDiffPct}%`;
   compBarDiff.style.width = `${visualDiffPct}%`;
   compBarDiff.classList.toggle('down', !isUp);
@@ -234,6 +254,7 @@ function setCurrency(newCurrency) {
     const sign = isUp ? '+' : '';
     badge.innerHTML = `<span>${sign}${currData.delta10Days.toFixed(4)} lei (${sign}${currData.percentChange10Days.toFixed(2)}%) în 10 zile</span>`;
   }
+  updateMobileDock(currData);
   renderSparkline(currData.history);
   triggerSparklineAnimation();
   updateStoryTexts(currData, translationsData);
