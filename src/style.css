@@ -39,6 +39,28 @@ body {
   background: var(--accent-blue); z-index: 120; transition: width 0.05s linear;
 }
 
+/* Mini dock: doar pe mobil, sub header, curs vizibil la scroll */
+.mobile-rate-dock {
+  display: none;
+  position: sticky;
+  top: var(--header-h);
+  z-index: 95;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.45rem 1rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  font-size: 0.85rem;
+}
+.mobile-rate-dock[hidden] { display: none !important; }
+.dock-pair { font-weight: 600; color: var(--text-muted); }
+.dock-rate { font-weight: 700; font-size: 1rem; color: var(--text-primary); }
+.dock-delta { font-weight: 600; font-size: 0.8rem; padding: 0.15rem 0.5rem; border-radius: 12px; background: var(--bg-muted); }
+.dock-delta.up { background: #ffe4e6; color: var(--diff-up-color); }
+.dock-delta.down { background: #d1fae5; color: var(--diff-down-color); }
+
 .site-header {
   position: sticky; top: 0; z-index: 100;
   background: rgba(248,250,252,.98); backdrop-filter: blur(10px);
@@ -83,7 +105,6 @@ body {
   padding: 0.85rem 1rem; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 0.95rem;
 }
 
-/* Desktop: sticky sub header, cu offset generos */
 .scrolly-visual-wrapper {
   position: sticky;
   top: calc(var(--header-h) + 1.25rem);
@@ -141,9 +162,12 @@ body {
 .lens-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
 .lens-main-val { font-size: 1.35rem; font-weight: 700; margin: 0.35rem 0; }
 .lens-detail { font-size: 0.9rem; color: var(--text-secondary); margin: 0 0 0.75rem; }
-.comparison-track { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--bg-muted); }
-.comp-bar-base { background: #94a3b8; height: 100%; transition: width 0.4s ease; }
-.comp-bar-diff { background: var(--diff-up-color); height: 100%; transition: width 0.4s ease; }
+.comparison-track {
+  display: flex; height: 10px; border-radius: 5px; overflow: hidden;
+  background: var(--bg-muted); min-width: 0;
+}
+.comp-bar-base { background: #94a3b8; height: 100%; min-width: 0; transition: width 0.4s ease; }
+.comp-bar-diff { background: var(--diff-up-color); height: 100%; min-width: 4px; transition: width 0.4s ease; }
 .comp-bar-diff.down { background: var(--diff-down-color); }
 .comparison-legend { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-muted); }
 .dot-base, .dot-diff { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.25rem; }
@@ -186,11 +210,9 @@ body {
 }
 .footer-credits { margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-light); }
 
-/*
- * Sub ~1100px: o coloană, panoul NU e sticky.
- * Astfel textul pașilor nu trece pe sub card și nu se lipește de header.
- */
 @media (max-width: 1100px) {
+  .mobile-rate-dock:not([hidden]) { display: flex; }
+
   .scrolly-container {
     grid-template-columns: 1fr;
     gap: 1.25rem;
