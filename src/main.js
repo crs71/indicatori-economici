@@ -25,10 +25,17 @@ function animateNumber(element, targetNum, formatFn, duration = 450) {
   requestAnimationFrame(frame);
 }
 
+function flashClass(el, className, ms = 500) {
+  if (!el) return;
+  el.classList.remove(className);
+  void el.offsetWidth;
+  el.classList.add(className);
+  window.setTimeout(() => el.classList.remove(className), ms);
+}
+
 function syncChartDetailsOpen() {
   const details = document.getElementById('chartDetails');
   if (!details) return;
-  // Desktop: grafic mereu vizibil; mobil: închis implicit (dropdown)
   if (window.matchMedia('(min-width: 1101px)').matches) {
     details.open = true;
   } else if (!details.dataset.userToggled) {
@@ -41,7 +48,15 @@ function initChartDetails() {
   if (!details) return;
   details.addEventListener('toggle', () => {
     details.dataset.userToggled = '1';
-    if (details.open) triggerSparklineAnimation();
+    if (details.open) {
+      triggerSparklineAnimation();
+      const area = document.getElementById('sparklineArea');
+      if (area) {
+        area.classList.remove('is-visible');
+        void area.offsetWidth;
+        area.classList.add('is-visible');
+      }
+    }
   });
   syncChartDetailsOpen();
   window.addEventListener('resize', syncChartDetailsOpen);
@@ -97,6 +112,9 @@ function renderSparkline(history) {
   if (area) {
     const last = coords[coords.length - 1], first = coords[0];
     area.setAttribute('d', `${d} L ${last.x.toFixed(1)} ${h} L ${first.x.toFixed(1)} ${h} Z`);
+    area.classList.remove('is-visible');
+    void area.offsetWidth;
+    area.classList.add('is-visible');
   }
   if (pointsGroup) {
     pointsGroup.innerHTML = '';
@@ -162,7 +180,12 @@ function handleStepChange(stepId) {
   const lensLabel = document.getElementById('lensLabel');
   const lensValue = document.getElementById('lensValue');
   const lensDetail = document.getElementById('lensDetail');
+  const sticky = document.getElementById('stickyDisplay');
+  const lens = document.getElementById('dynamicLens');
+
   updateTimelineDots(stepId);
+  flashClass(sticky, 'is-updating', 550);
+  flashClass(lens, 'is-updating', 500);
 
   switch (stepId) {
     case 'step-intro':
@@ -250,7 +273,10 @@ function setCurrency(newCurrency) {
   const pairLabel = document.getElementById('currencyPairLabel');
   if (pairLabel) pairLabel.textContent = CURRENCY_CONFIG[activeCurrency].pairLabel;
   const displayRate = document.getElementById('displayRate');
-  if (displayRate) animateNumber(displayRate, currData.currentRate, (v) => v.toFixed(4));
+  if (displayRate) {
+    animateNumber(displayRate, currData.currentRate, (v) => v.toFixed(4));
+    flashClass(displayRate, 'is-popping', 450);
+  }
   const badge = document.getElementById('displayDeltaBadge');
   if (badge) {
     const isUp = currData.delta10Days > 0;
@@ -258,6 +284,7 @@ function setCurrency(newCurrency) {
     badge.className = `rate-delta-badge ${isUp ? 'up' : isNeutral ? 'neutral' : 'down'}`;
     const sign = isUp ? '+' : '';
     badge.innerHTML = `<span>${sign}${currData.delta10Days.toFixed(4)} lei (${sign}${currData.percentChange10Days.toFixed(2)}%) în 10 zile</span>`;
+    flashClass(badge, 'is-popping', 400);
   }
   renderSparkline(currData.history);
   triggerSparklineAnimation();
