@@ -320,6 +320,13 @@ body {
 .result-label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem; }
 .result-val { font-size: 1.1rem; font-weight: 700; }
 
+.indicator-section { max-width: 1100px; margin: 1rem auto 4rem; padding: 0 1.5rem; }
+.indicator-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.5rem; align-items: start; margin-top: 1.5rem; }
+.scenario-list { display: flex; flex-direction: column; gap: 1.5rem; }
+@media (max-width: 900px) {
+  .indicator-grid { grid-template-columns: 1fr; }
+}
+
 .context-section { max-width: 720px; margin: 0 auto 3rem; padding: 0 1.5rem; }
 .context-box { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem; }
 .context-title { margin: 0 0 0.75rem; font-size: 1.1rem; }

@@ -5,6 +5,7 @@
   import { scrollStep } from './scrollStep.js';
   import StickyPanel from './components/StickyPanel.svelte';
   import Calculator from './components/Calculator.svelte';
+  import InterestSection from './components/InterestSection.svelte';
 
   let exchangeData = $state(null);
   let activeCurrency = $state('EUR');
@@ -180,6 +181,8 @@
   </section>
 
   <Calculator {activeCurrency} {currData} />
+
+  <InterestSection />
 
   <section class="context-section">
     <div class="context-box">
