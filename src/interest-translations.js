@@ -12,33 +12,36 @@ export const INTEREST_SCENARIOS = [
   {
     id: 'savings',
     title: 'Depozit de economii',
-    amount: 5000,
+    defaultAmount: 5000,
     verb: 'câștigat',
   },
   {
     id: 'loan',
     title: 'Credit sau împrumut',
-    amount: 10000,
+    defaultAmount: 10000,
     verb: 'plătit',
   },
 ];
 
+/**
+ * Calculează dobânda zilnică și cea acumulată de la ultima schimbare, pentru
+ * o sumă aleasă liber de utilizator (input editabil în UI).
+ */
+export function calculateScenarioImpact(amount, currentDpm, daysSinceChange) {
+  const amt = Number(amount) || 0;
+  const dailyAmount = (amt * currentDpm) / 100 / 365;
+  const accumulated = dailyAmount * daysSinceChange;
+  return {
+    dailyFormatted: formatRon(dailyAmount),
+    accumulatedFormatted: formatRon(accumulated),
+  };
+}
+
 export function generateInterestTranslations(data) {
-  const { current, previous, delta, daysSinceChange } = data;
+  const { delta, daysSinceChange } = data;
   const isUp = delta > 0.0001;
   const isNeutral = Math.abs(delta) < 0.0001;
   const directionText = isUp ? 'creștere' : isNeutral ? 'stagnare' : 'scădere';
-
-  const scenarios = INTEREST_SCENARIOS.map((scen) => {
-    const dailyAmount = (scen.amount * current.dpm) / 100 / 365;
-    const accumulated = dailyAmount * daysSinceChange;
-    return {
-      ...scen,
-      amountFormatted: `${scen.amount.toLocaleString('ro-RO')} lei`,
-      dailyFormatted: formatRon(dailyAmount),
-      accumulatedFormatted: formatRon(accumulated),
-    };
-  });
 
   return {
     meta: {
@@ -48,7 +51,6 @@ export function generateInterestTranslations(data) {
       deltaFormatted: `${isUp ? '+' : ''}${delta.toFixed(2).replace('.', ',')} puncte procentuale`,
       daysSinceChange,
     },
-    scenarios,
   };
 }
 

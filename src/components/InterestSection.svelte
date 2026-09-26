@@ -1,15 +1,33 @@
 <script>
   import { onMount } from 'svelte';
   import { getInterestRateData, formatDateRo } from '../interest-service.js';
-  import { generateInterestTranslations, compareToExchangeRateVolatility } from '../interest-translations.js';
+  import {
+    INTEREST_SCENARIOS,
+    generateInterestTranslations,
+    calculateScenarioImpact,
+    compareToExchangeRateVolatility,
+  } from '../interest-translations.js';
   import InterestStaircase from './InterestStaircase.svelte';
 
   let { eurHistory } = $props();
 
   let data = $state(null);
   let loadError = $state(false);
+  let amounts = $state(Object.fromEntries(INTEREST_SCENARIOS.map((s) => [s.id, s.defaultAmount])));
 
   let translations = $derived.by(() => (data ? generateInterestTranslations(data) : null));
+  let scenarios = $derived.by(() => {
+    if (!data) return [];
+    return INTEREST_SCENARIOS.map((scen) => ({
+      ...scen,
+      amount: amounts[scen.id],
+      ...calculateScenarioImpact(amounts[scen.id], data.current.dpm, data.daysSinceChange),
+    }));
+  });
+
+  function setAmount(id, value) {
+    amounts = { ...amounts, [id]: Math.max(0, value) };
+  }
   let contrast = $derived.by(() =>
     data ? compareToExchangeRateVolatility(eurHistory, data.daysSinceChange) : null
   );
@@ -80,9 +98,24 @@
       </div>
 
       <div class="scenario-list">
-        {#each translations.scenarios as scen}
+        {#each scenarios as scen}
           <div class="calculator-card">
-            <h3 class="calc-title" style="font-size: 1.1rem;">{scen.title} ({scen.amountFormatted})</h3>
+            <h3 class="calc-title" style="font-size: 1.1rem; display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+              <span>{scen.title}</span>
+              <span class="calc-input-wrapper">
+                <input
+                  type="number"
+                  class="calc-input tabular"
+                  style="width: 100px; font-size: 1rem;"
+                  min="0"
+                  max="1000000"
+                  step="100"
+                  value={scen.amount}
+                  oninput={(e) => setAmount(scen.id, parseFloat(e.target.value) || 0)}
+                />
+                <span class="calc-currency-symbol">lei</span>
+              </span>
+            </h3>
             <p class="calc-subtitle">
               Simplificare didactică — dobândă simplă, proporțională cu zilele scurse de la {data.currentDateFormatted}.
               Nu e o ofertă reală de la vreo bancă (băncile aplică marje proprii și rate de referință precum
