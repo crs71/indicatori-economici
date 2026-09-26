@@ -182,7 +182,7 @@
 
   <Calculator {activeCurrency} {currData} />
 
-  <InterestSection />
+  <InterestSection eurHistory={exchangeData?.currencies?.EUR?.history} />
 
   <section class="context-section">
     <div class="context-box">

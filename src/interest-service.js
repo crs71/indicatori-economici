@@ -111,12 +111,14 @@ export async function getInterestRateData() {
   const current = history[n - 1];
   const previous = n > 1 ? history[n - 2] : current;
   const delta = current.dpm - previous.dpm;
+  const daysSinceChange = Math.max(0, Math.floor((Date.now() - new Date(current.date)) / 86400000));
 
   return {
     isFallback,
     current,
     previous,
     delta,
+    daysSinceChange,
     currentDateFormatted: formatDateRo(current.date),
     previousDateFormatted: formatDateRo(previous.date),
     history,
