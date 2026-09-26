@@ -10,9 +10,13 @@ export function initScrollytelling({ stepSelector, onStepChange }) {
 
   let currentActiveStep = null;
 
+  // Pe mobil panoul fix ocupă cam 40% din partea de sus a ecranului, așa că
+  // pasul activ se alege dintr-o bandă aflată sub el, nu din spatele lui.
+  const isStacked = window.matchMedia('(max-width: 1100px)').matches;
+
   const observerOptions = {
     root: null,
-    rootMargin: '-30% 0px -45% 0px',
+    rootMargin: isStacked ? '-50% 0px -25% 0px' : '-30% 0px -45% 0px',
     threshold: 0,
   };
 

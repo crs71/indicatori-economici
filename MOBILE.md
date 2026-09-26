@@ -2,10 +2,13 @@
 
 ## Layout mobil (implementat în `src/style.css`)
 
-- Sub 900px: o singură coloană; panoul vizual (`order: -1`) deasupra narațiunii
-- Panou sticky limitat la ~48vh, scroll intern dacă e nevoie
+- Sub 1100px: o singură coloană; panoul vizual (`order: -1`) fix deasupra narațiunii
+- Panoul compact (antetul cu perechea/data ascuns, graficul pliat într-un `<details>`)
+  ocupă cam 40% din ecran; are scroll intern dacă nu încape
+- Pasul activ se alege dintr-o bandă aflată sub panou (`src/scrolly.js`), ca să nu
+  se activeze un card ascuns în spatele lui
 - Butoane / input min 44px (touch)
-- Sparkline mai scurt pe ecrane mici
+- Sparkline mai scurt pe ecrane mici; ajustări suplimentare sub 480px
 - `prefers-reduced-motion` respectat
 
 ## Cum testezi schimbările din GitHub
@@ -31,10 +34,4 @@ Apoi pe telefon (aceeași rețea Wi‑Fi): `http://IP-ul-PC-ului:3000`
 cd indicatori-economici
 git pull
 npm run dev
-```
-
-## Fișiere încă de completat pe GitHub
-Dacă lipsește `index.html` / `src/main.js` / `src/style.css`, copiază-le din arhiva locală `indicatori-economici.zip` peste clone, apoi:
-```bash
-git add -A && git commit -m "Add remaining app sources" && git push
 ```
