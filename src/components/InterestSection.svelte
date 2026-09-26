@@ -106,7 +106,7 @@
                 <input
                   type="number"
                   class="calc-input tabular"
-                  style="width: 100px; font-size: 1rem;"
+                  style="width: 140px; font-size: 1rem;"
                   min="0"
                   max="1000000"
                   step="100"
