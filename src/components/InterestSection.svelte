@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { getInterestRateData } from '../interest-service.js';
+  import { getInterestRateData, formatDateRo } from '../interest-service.js';
   import { generateInterestTranslations, compareToExchangeRateVolatility } from '../interest-translations.js';
   import InterestStaircase from './InterestStaircase.svelte';
 
@@ -13,6 +13,12 @@
   let contrast = $derived.by(() =>
     data ? compareToExchangeRateVolatility(eurHistory, data.daysSinceChange) : null
   );
+  let rangeText = $derived.by(() => {
+    if (!data?.history?.length) return '—';
+    const rates = data.history.map((p) => p.dpm);
+    return `min ${Math.min(...rates).toFixed(2)}% • max ${Math.max(...rates).toFixed(2)}%`;
+  });
+  let firstDateFormatted = $derived.by(() => (data?.history?.length ? formatDateRo(data.history[0].date) : '—'));
 
   onMount(async () => {
     try {
@@ -58,9 +64,18 @@
             <strong>{contrast.daysSinceChange} zile</strong>.
           </p>
         {/if}
+        <div class="chart-header">
+          <span>Evoluție istorică a ratei (% p.a.)</span>
+          <span class="tabular">{rangeText}</span>
+        </div>
         <InterestStaircase history={data.history} />
+        <div class="chart-dates-footer">
+          <span>{firstDateFormatted}</span>
+          <span>{data.currentDateFormatted}</span>
+        </div>
         <p class="calc-subtitle" style="margin-top: 0.75rem;">
-          Istoric din {data.history[0].date.slice(0, 4)} până azi — fiecare treaptă e o decizie CA, nu o zi calendaristică.
+          Fiecare treaptă a graficului e o decizie a Consiliului de Administrație BNR, nu o zi calendaristică — de
+          aceea segmentele au lungimi diferite (unele decizii au stat ani, altele luni).
         </p>
       </div>
 

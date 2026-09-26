@@ -388,41 +388,46 @@ body {
   .timeline-tracker { gap: 0.28rem; }
   .step-dot { width: 6px; height: 6px; }
 
-  .rate-hero { margin: 0.15rem 0 0.35rem; }
-  .rate-large { font-size: 1.7rem; }
-  .rate-unit { font-size: 0.8rem; }
-  .rate-delta-badge {
+  /* Regulile de mai jos compactează panoul sticky de pe indicatorul de curs
+     (spațiu limitat la ~40% din ecran pe mobil — vezi MOBILE.md). Sunt
+     scopate la `.sticky-display` ca să nu "scurgă" spre alte carduri care
+     reutilizează aceleași clase (ex. InterestSection), unde spațiul nu e
+     limitat și textul trebuie să rămână complet, nu trunchiat. */
+  .sticky-display .rate-hero { margin: 0.15rem 0 0.35rem; }
+  .sticky-display .rate-large { font-size: 1.7rem; }
+  .sticky-display .rate-unit { font-size: 0.8rem; }
+  .sticky-display .rate-delta-badge {
     margin-top: 0.25rem;
     font-size: 0.68rem;
     padding: 0.18rem 0.45rem;
   }
 
-  .chart-summary {
+  .sticky-display .chart-summary {
     display: flex;
     margin: 0.2rem 0;
     padding: 0.4rem 0.55rem;
     font-size: 0.72rem;
   }
-  .chart-summary-hint { display: none; }
-  .chart-header-desktop { display: none; }
-  .chart-details:not([open]) .chart-container { display: none; }
-  .chart-details[open] .chart-container {
+  .sticky-display .chart-summary-hint { display: none; }
+  .sticky-display .chart-header-desktop { display: none; }
+  .sticky-display .chart-details:not([open]) .chart-container { display: none; }
+  .sticky-display .chart-details[open] .chart-container {
     display: block;
     margin: 0.35rem 0 0.15rem;
   }
   .sparkline-svg { height: 56px; }
   .chart-dates-footer { font-size: 0.65rem; }
 
-  .lens-container {
+  .sticky-display .lens-container {
     margin-top: 0.4rem;
     padding-top: 0.45rem;
   }
-  .lens-label { font-size: 0.65rem; letter-spacing: 0.03em; }
-  .lens-main-val {
+  .sticky-display .lens-label { font-size: 0.65rem; letter-spacing: 0.03em; }
+  .sticky-display .lens-main-val {
     font-size: 1.05rem;
     margin: 0.15rem 0 0.2rem;
   }
-  .lens-detail {
+  .sticky-display .lens-detail {
     font-size: 0.75rem;
     margin: 0 0 0.35rem;
     line-height: 1.35;
