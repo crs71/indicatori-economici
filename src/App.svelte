@@ -6,6 +6,7 @@
   import StickyPanel from './components/StickyPanel.svelte';
   import Calculator from './components/Calculator.svelte';
   import InterestSection from './components/InterestSection.svelte';
+  import InflationSection from './components/InflationSection.svelte';
 
   let exchangeData = $state(null);
   let activeCurrency = $state('EUR');
@@ -183,6 +184,8 @@
   <Calculator {activeCurrency} {currData} />
 
   <InterestSection eurHistory={exchangeData?.currencies?.EUR?.history} />
+
+  <InflationSection />
 
   <section class="context-section">
     <div class="context-box">
