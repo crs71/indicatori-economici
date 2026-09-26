@@ -7,6 +7,7 @@
   import Calculator from './components/Calculator.svelte';
   import InterestSection from './components/InterestSection.svelte';
   import InflationSection from './components/InflationSection.svelte';
+  import SalarySection from './components/SalarySection.svelte';
 
   let exchangeData = $state(null);
   let activeCurrency = $state('EUR');
@@ -186,6 +187,8 @@
   <InterestSection eurHistory={exchangeData?.currencies?.EUR?.history} />
 
   <InflationSection />
+
+  <SalarySection />
 
   <section class="context-section">
     <div class="context-box">

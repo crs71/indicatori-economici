@@ -3,26 +3,29 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 
 /**
  * INS TEMPO Online cere POST cu JSON pentru /tempo-ins/pivot, dar noi expunem
- * /api/inflatie-pivot ca GET cu query params (vezi functions/api/inflatie-pivot.js
- * pentru motiv). Un simple `proxy.rewrite` din Vite nu poate schimba metoda sau
- * construi un body — de-aia avem nevoie de un middleware dedicat, care oglindește
- * exact logica funcției Cloudflare, ca developmentul local să folosească
- * aceleași date live ca producția.
+ * /api/ins-pivot ca GET cu query params (vezi functions/api/ins-pivot.js pentru
+ * motiv). Un simplu `proxy.rewrite` din Vite nu poate schimba metoda sau
+ * construi un body — de-aia avem nevoie de un middleware dedicat, care
+ * oglindește exact logica funcției Cloudflare, ca developmentul local să
+ * folosească aceleași date live ca producția. Generic — orice indicator bazat
+ * pe INS (inflație, salariu mediu etc.) trece prin același endpoint, cu
+ * `matCode` ca query param.
  */
 function insPivotDevMiddleware() {
   return {
     name: 'ins-pivot-dev-middleware',
     configureServer(server) {
-      server.middlewares.use('/api/inflatie-pivot', async (req, res) => {
+      server.middlewares.use('/api/ins-pivot', async (req, res) => {
         const url = new URL(req.url, 'http://localhost');
+        const matCode = url.searchParams.get('matCode');
         const encQuery = url.searchParams.get('encQuery');
         const matMaxDim = Number(url.searchParams.get('matMaxDim') || 3);
         const matRegJ = Number(url.searchParams.get('matRegJ') || 0);
         const matUMSpec = Number(url.searchParams.get('matUMSpec') || 0);
 
-        if (!encQuery) {
+        if (!matCode || !encQuery) {
           res.statusCode = 400;
-          res.end(JSON.stringify({ error: 'Missing encQuery param' }));
+          res.end(JSON.stringify({ error: 'Missing matCode or encQuery param' }));
           return;
         }
 
@@ -33,7 +36,7 @@ function insPivotDevMiddleware() {
             body: JSON.stringify({
               encQuery,
               language: 'ro',
-              matCode: 'IPC102E',
+              matCode,
               matMaxDim,
               matRegJ,
               matUMSpec,
@@ -73,10 +76,13 @@ export default defineConfig({
           'User-Agent': 'Traducator-Indicatori-ASE/1.0',
         },
       },
-      '/api/inflatie-meta': {
+      '/api/ins-meta': {
         target: 'http://statistici.insse.ro:8077',
         changeOrigin: true,
-        rewrite: () => '/tempo-ins/matrix/IPC102E',
+        rewrite: (path) => {
+          const matCode = new URL(path, 'http://x').searchParams.get('matCode');
+          return `/tempo-ins/matrix/${matCode}`;
+        },
       },
       '/api/bnr': {
         target: 'https://curs.bnr.ro',

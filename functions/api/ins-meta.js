@@ -1,16 +1,27 @@
 /**
- * Cloudflare Pages Function — proxy + cache pentru metadatele matricei INS
- * IPC102E (indicii prețurilor de consum, evoluție lunară față de anul precedent).
- * GET /api/inflatie-meta → JSON de la statistici.insse.ro (TEMPO Online), care
- * conține dimensiunile matricei (categorii, luni, unitate de măsură) necesare
- * pentru a construi interogarea către /api/inflatie-pivot.
+ * Cloudflare Pages Function — proxy + cache pentru metadatele unei matrice INS
+ * TEMPO Online (dimensiuni: categorii, luni, unitate de măsură).
+ * GET /api/ins-meta?matCode=IPC102E → JSON de la statistici.insse.ro
+ *
+ * Generic — folosit de orice indicator bazat pe INS (inflație, salariu mediu
+ * etc.), ca să nu se dubleze aceeași logică de proxy pentru fiecare matrice.
  *
  * Notă: statistici.insse.ro:8077 nu are HTTPS (deci "mixed content" ar bloca
  * fetch-ul direct din browser oricum) și nu trimite Access-Control-Allow-Origin
  * — verificat manual — deci un proxy e obligatoriu, nu doar o chestiune de CORS.
  */
-export async function onRequestGet() {
-  const INS_URL = 'http://statistici.insse.ro:8077/tempo-ins/matrix/IPC102E';
+export async function onRequestGet(context) {
+  const { searchParams } = new URL(context.request.url);
+  const matCode = searchParams.get('matCode');
+
+  if (!matCode || !/^[A-Z0-9]+$/i.test(matCode)) {
+    return new Response(JSON.stringify({ error: 'Missing or invalid matCode param' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+    });
+  }
+
+  const INS_URL = `http://statistici.insse.ro:8077/tempo-ins/matrix/${matCode}`;
 
   try {
     const upstream = await fetch(INS_URL, {
