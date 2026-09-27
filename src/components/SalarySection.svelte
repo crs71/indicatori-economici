@@ -1,12 +1,16 @@
 <script>
   import { onMount } from 'svelte';
+  import { tweened } from 'svelte/motion';
+  import { cubicOut } from 'svelte/easing';
   import { getSalaryData } from '../salary-service.js';
   import {
     SALARY_SCENARIOS,
     generateSalaryTranslations,
     calculateSalaryImpact,
   } from '../salary-translations.js';
+  import { formatRon } from '../translations.js';
   import Sparkline from './Sparkline.svelte';
+  import { scrollReveal } from '../scrollReveal.js';
 
   let data = $state(null);
   let loadError = $state(false);
@@ -38,6 +42,11 @@
     amounts = { ...amounts, [id]: Math.max(0, value) };
   }
 
+  const salaryTween = tweened(0, { duration: 700, easing: cubicOut });
+  $effect(() => {
+    if (data) salaryTween.set(data.current.value);
+  });
+
   onMount(async () => {
     try {
       data = await getSalaryData();
@@ -49,7 +58,7 @@
 </script>
 
 <section class="indicator-section">
-  <div class="intro-section">
+  <div class="intro-section reveal-on-scroll" use:scrollReveal>
     <span class="eyebrow">Al patrulea indicator • Piața muncii</span>
     <h2 class="intro-title">Câte ore de muncă costă o cheltuială, azi față de acum un an?</h2>
     <p class="intro-lead">
@@ -60,11 +69,11 @@
   </div>
 
   {#if data && translations}
-    <div class="indicator-grid">
+    <div class="indicator-grid reveal-on-scroll" use:scrollReveal={{ delay: 120 }}>
       <div class="calculator-card">
         <div class="rate-hero">
           <div class="rate-number-wrap">
-            <span class="rate-large tabular">{translations.meta.currentFormatted}</span>
+            <span class="rate-large tabular">{formatRon($salaryTween)}</span>
             <span class="rate-unit">salariu mediu net / lună</span>
           </div>
           {#if translations.meta.growthFormatted}
@@ -115,23 +124,25 @@
             <p class="calc-subtitle">
               La rata orară derivată din salariul mediu, cam atâtea ore de muncă reprezintă suma de mai sus.
             </p>
-            <div class="calc-results-grid">
-              <div class="result-item">
-                <span class="result-label">Acum un an</span>
-                <span class="result-val tabular">{scen.hoursYearAgoFormatted ?? '—'}</span>
+            {#key scen.amount}
+              <div class="calc-results-grid">
+                <div class="result-item">
+                  <span class="result-label">Acum un an</span>
+                  <span class="result-val tabular">{scen.hoursYearAgoFormatted ?? '—'}</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Astăzi</span>
+                  <span class="result-val tabular">{scen.hoursNowFormatted}</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Concluzie</span>
+                  <span
+                    class="result-val tabular diff-highlight"
+                    style="color: {scen.isEasierNow ? 'var(--diff-down-color)' : scen.isHarderNow ? 'var(--diff-up-color)' : 'inherit'}"
+                  >{scen.isEasierNow ? 'mai puțin efort' : scen.isHarderNow ? 'mai mult efort' : 'neschimbat'}</span>
+                </div>
               </div>
-              <div class="result-item">
-                <span class="result-label">Astăzi</span>
-                <span class="result-val tabular">{scen.hoursNowFormatted}</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Concluzie</span>
-                <span
-                  class="result-val tabular diff-highlight"
-                  style="color: {scen.isEasierNow ? 'var(--diff-down-color)' : scen.isHarderNow ? 'var(--diff-up-color)' : 'inherit'}"
-                >{scen.isEasierNow ? 'mai puțin efort' : scen.isHarderNow ? 'mai mult efort' : 'neschimbat'}</span>
-              </div>
-            </div>
+            {/key}
           </div>
         {/each}
       </div>

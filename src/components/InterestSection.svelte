@@ -1,5 +1,7 @@
 <script>
   import { onMount } from 'svelte';
+  import { tweened } from 'svelte/motion';
+  import { cubicOut } from 'svelte/easing';
   import { getInterestRateData, formatDateRo } from '../interest-service.js';
   import {
     INTEREST_SCENARIOS,
@@ -8,6 +10,7 @@
     compareToExchangeRateVolatility,
   } from '../interest-translations.js';
   import InterestStaircase from './InterestStaircase.svelte';
+  import { scrollReveal } from '../scrollReveal.js';
 
   let { eurHistory } = $props();
 
@@ -38,6 +41,11 @@
   });
   let firstDateFormatted = $derived.by(() => (data?.history?.length ? formatDateRo(data.history[0].date) : '—'));
 
+  const daysTween = tweened(0, { duration: 700, easing: cubicOut });
+  $effect(() => {
+    if (translations) daysTween.set(translations.meta.daysSinceChange);
+  });
+
   onMount(async () => {
     try {
       data = await getInterestRateData();
@@ -49,7 +57,7 @@
 </script>
 
 <section class="indicator-section">
-  <div class="intro-section">
+  <div class="intro-section reveal-on-scroll" use:scrollReveal>
     <span class="eyebrow">Al doilea indicator • Politică monetară</span>
     <h2 class="intro-title">Câte zile a stat pe loc rata BNR?</h2>
     <p class="intro-lead">
@@ -60,11 +68,11 @@
   </div>
 
   {#if data && translations}
-    <div class="indicator-grid">
+    <div class="indicator-grid reveal-on-scroll" use:scrollReveal={{ delay: 120 }}>
       <div class="calculator-card">
         <div class="rate-hero">
           <div class="rate-number-wrap">
-            <span class="rate-large tabular">{translations.meta.daysSinceChange}</span>
+            <span class="rate-large tabular">{Math.round($daysTween)}</span>
             <span class="rate-unit">zile fără schimbare</span>
           </div>
           <div class="rate-delta-badge neutral">
@@ -121,16 +129,18 @@
               Nu e o ofertă reală de la vreo bancă (băncile aplică marje proprii și rate de referință precum
               ROBOR/IRCC).
             </p>
-            <div class="calc-results-grid">
-              <div class="result-item">
-                <span class="result-label">Ritm zilnic la {data.current.dpm.toFixed(2)}%</span>
-                <span class="result-val tabular">{scen.dailyFormatted} / zi</span>
+            {#key scen.amount}
+              <div class="calc-results-grid">
+                <div class="result-item">
+                  <span class="result-label">Ritm zilnic la {data.current.dpm.toFixed(2)}%</span>
+                  <span class="result-val tabular">{scen.dailyFormatted} / zi</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Ai fi {scen.verb} până azi</span>
+                  <span class="result-val tabular diff-highlight">{scen.accumulatedFormatted}</span>
+                </div>
               </div>
-              <div class="result-item">
-                <span class="result-label">Ai fi {scen.verb} până azi</span>
-                <span class="result-val tabular diff-highlight">{scen.accumulatedFormatted}</span>
-              </div>
-            </div>
+            {/key}
           </div>
         {/each}
       </div>

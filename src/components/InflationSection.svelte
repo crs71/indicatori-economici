@@ -1,5 +1,7 @@
 <script>
   import { onMount } from 'svelte';
+  import { tweened } from 'svelte/motion';
+  import { cubicOut } from 'svelte/easing';
   import { getInflationData } from '../inflation-service.js';
   import {
     INFLATION_SCENARIOS,
@@ -7,6 +9,7 @@
     calculateInflationImpact,
   } from '../inflation-translations.js';
   import Sparkline from './Sparkline.svelte';
+  import { scrollReveal } from '../scrollReveal.js';
 
   let data = $state(null);
   let loadError = $state(false);
@@ -38,6 +41,11 @@
     amounts = { ...amounts, [id]: Math.max(0, value) };
   }
 
+  const rateTween = tweened(0, { duration: 700, easing: cubicOut });
+  $effect(() => {
+    if (data) rateTween.set(data.currentRate);
+  });
+
   onMount(async () => {
     try {
       data = await getInflationData();
@@ -49,7 +57,7 @@
 </script>
 
 <section class="indicator-section">
-  <div class="intro-section">
+  <div class="intro-section reveal-on-scroll" use:scrollReveal>
     <span class="eyebrow">Al treilea indicator • Inflație</span>
     <h2 class="intro-title">Cât mai scump e coșul tău față de acum un an?</h2>
     <p class="intro-lead">
@@ -60,11 +68,11 @@
   </div>
 
   {#if data && translations}
-    <div class="indicator-grid">
+    <div class="indicator-grid reveal-on-scroll" use:scrollReveal={{ delay: 120 }}>
       <div class="calculator-card">
         <div class="rate-hero">
           <div class="rate-number-wrap">
-            <span class="rate-large tabular">{translations.meta.currentRate > 0 ? '+' : ''}{translations.meta.currentRate.toFixed(2)}</span>
+            <span class="rate-large tabular">{$rateTween > 0 ? '+' : ''}{$rateTween.toFixed(2)}</span>
             <span class="rate-unit">% față de acum un an</span>
           </div>
           <div class="rate-delta-badge {translations.meta.isAccelerating ? 'up' : translations.meta.isDecelerating ? 'down' : 'neutral'}">
@@ -113,20 +121,22 @@
               Ce costa {scen.lastYearFormatted} acum un an, costă azi, la aceeași inflație de
               {translations.meta.currentRate.toFixed(2)}%.
             </p>
-            <div class="calc-results-grid">
-              <div class="result-item">
-                <span class="result-label">Acum un an</span>
-                <span class="result-val tabular">{scen.lastYearFormatted}</span>
+            {#key scen.amount}
+              <div class="calc-results-grid">
+                <div class="result-item">
+                  <span class="result-label">Acum un an</span>
+                  <span class="result-val tabular">{scen.lastYearFormatted}</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Astăzi</span>
+                  <span class="result-val tabular">{scen.nowFormatted}</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Diferență</span>
+                  <span class="result-val tabular diff-highlight">{scen.extraFormatted}</span>
+                </div>
               </div>
-              <div class="result-item">
-                <span class="result-label">Astăzi</span>
-                <span class="result-val tabular">{scen.nowFormatted}</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Diferență</span>
-                <span class="result-val tabular diff-highlight">{scen.extraFormatted}</span>
-              </div>
-            </div>
+            {/key}
           </div>
         {/each}
       </div>

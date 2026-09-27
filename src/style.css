@@ -327,6 +327,20 @@ body {
   .indicator-grid { grid-template-columns: 1fr; }
 }
 
+@keyframes valuePulse {
+  0% { transform: scale(0.93); opacity: 0.6; }
+  60% { transform: scale(1.04); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.calc-results-grid .result-val { display: inline-block; animation: valuePulse 0.3s ease; }
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-on-scroll.is-revealed { opacity: 1; transform: translateY(0); }
+
 .context-section { max-width: 720px; margin: 0 auto 3rem; padding: 0 1.5rem; }
 .context-box { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem; }
 .context-title { margin: 0 0 0.75rem; font-size: 1.1rem; }
