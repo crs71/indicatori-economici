@@ -167,6 +167,7 @@ body {
 .step-dot {
   width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); cursor: pointer;
   transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  border: none; padding: 0; appearance: none;
 }
 .step-dot.is-active {
   background: var(--accent-blue);
@@ -319,6 +320,27 @@ body {
 .result-label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem; }
 .result-val { font-size: 1.1rem; font-weight: 700; }
 
+.indicator-section { max-width: 1100px; margin: 1rem auto 4rem; padding: 0 1.5rem; }
+.indicator-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.5rem; align-items: start; margin-top: 1.5rem; }
+.scenario-list { display: flex; flex-direction: column; gap: 1.5rem; }
+@media (max-width: 900px) {
+  .indicator-grid { grid-template-columns: 1fr; }
+}
+
+@keyframes valuePulse {
+  0% { transform: scale(0.93); opacity: 0.6; }
+  60% { transform: scale(1.04); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.calc-results-grid .result-val { display: inline-block; animation: valuePulse 0.3s ease; }
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-on-scroll.is-revealed { opacity: 1; transform: translateY(0); }
+
 .context-section { max-width: 720px; margin: 0 auto 3rem; padding: 0 1.5rem; }
 .context-box { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem; }
 .context-title { margin: 0 0 0.75rem; font-size: 1.1rem; }
@@ -380,41 +402,46 @@ body {
   .timeline-tracker { gap: 0.28rem; }
   .step-dot { width: 6px; height: 6px; }
 
-  .rate-hero { margin: 0.15rem 0 0.35rem; }
-  .rate-large { font-size: 1.7rem; }
-  .rate-unit { font-size: 0.8rem; }
-  .rate-delta-badge {
+  /* Regulile de mai jos compactează panoul sticky de pe indicatorul de curs
+     (spațiu limitat la ~40% din ecran pe mobil — vezi MOBILE.md). Sunt
+     scopate la `.sticky-display` ca să nu "scurgă" spre alte carduri care
+     reutilizează aceleași clase (ex. InterestSection), unde spațiul nu e
+     limitat și textul trebuie să rămână complet, nu trunchiat. */
+  .sticky-display .rate-hero { margin: 0.15rem 0 0.35rem; }
+  .sticky-display .rate-large { font-size: 1.7rem; }
+  .sticky-display .rate-unit { font-size: 0.8rem; }
+  .sticky-display .rate-delta-badge {
     margin-top: 0.25rem;
     font-size: 0.68rem;
     padding: 0.18rem 0.45rem;
   }
 
-  .chart-summary {
+  .sticky-display .chart-summary {
     display: flex;
     margin: 0.2rem 0;
     padding: 0.4rem 0.55rem;
     font-size: 0.72rem;
   }
-  .chart-summary-hint { display: none; }
-  .chart-header-desktop { display: none; }
-  .chart-details:not([open]) .chart-container { display: none; }
-  .chart-details[open] .chart-container {
+  .sticky-display .chart-summary-hint { display: none; }
+  .sticky-display .chart-header-desktop { display: none; }
+  .sticky-display .chart-details:not([open]) .chart-container { display: none; }
+  .sticky-display .chart-details[open] .chart-container {
     display: block;
     margin: 0.35rem 0 0.15rem;
   }
   .sparkline-svg { height: 56px; }
   .chart-dates-footer { font-size: 0.65rem; }
 
-  .lens-container {
+  .sticky-display .lens-container {
     margin-top: 0.4rem;
     padding-top: 0.45rem;
   }
-  .lens-label { font-size: 0.65rem; letter-spacing: 0.03em; }
-  .lens-main-val {
+  .sticky-display .lens-label { font-size: 0.65rem; letter-spacing: 0.03em; }
+  .sticky-display .lens-main-val {
     font-size: 1.05rem;
     margin: 0.15rem 0 0.2rem;
   }
-  .lens-detail {
+  .sticky-display .lens-detail {
     font-size: 0.75rem;
     margin: 0 0 0.35rem;
     line-height: 1.35;

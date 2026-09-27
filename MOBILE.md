@@ -2,11 +2,20 @@
 
 ## Layout mobil (implementat în `src/style.css`)
 
+**Indicatorul de curs** (singurul cu panou sticky):
 - Sub 1100px: o singură coloană; panoul vizual (`order: -1`) fix deasupra narațiunii
 - Panoul compact (antetul cu perechea/data ascuns, graficul pliat într-un `<details>`)
   ocupă cam 40% din ecran; are scroll intern dacă nu încape
-- Pasul activ se alege dintr-o bandă aflată sub panou (`src/scrolly.js`), ca să nu
-  se activeze un card ascuns în spatele lui
+- Pasul activ se alege dintr-o bandă aflată sub panou (acțiunea Svelte `src/scrollStep.js`,
+  succesorul lui `scrolly.js` din versiunea vanilla), ca să nu se activeze un card ascuns în spatele lui
+- Regulile de compactare de mai sus sunt scopate la `.sticky-display` în CSS — nu se aplică
+  și celorlalte două secțiuni (dobândă, inflație), care nu au panou sticky și nu au nevoie de ele
+
+**Indicatoarele de dobândă și inflație** (`.indicator-section`):
+- Grid pe 2 coloane peste 900px (grafic + carduri de scenarii), o singură coloană sub
+- Fără panou sticky — scroll normal, fără constrângere de înălțime
+
+**General:**
 - Butoane / input min 44px (touch)
 - Sparkline mai scurt pe ecrane mici; ajustări suplimentare sub 480px
 - `prefers-reduced-motion` respectat
