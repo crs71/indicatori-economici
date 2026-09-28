@@ -8,6 +8,7 @@
   import InterestSection from './components/InterestSection.svelte';
   import InflationSection from './components/InflationSection.svelte';
   import SalarySection from './components/SalarySection.svelte';
+  import SynthesisSection from './components/SynthesisSection.svelte';
 
   let exchangeData = $state(null);
   let activeCurrency = $state('EUR');
@@ -33,7 +34,7 @@
     try {
       exchangeData = await getExchangeRateData();
       statusText = exchangeData.isFallback
-        ? 'Date oficiale recente (mod offline)'
+        ? `Date de rezervă din ${exchangeData.currentDateFormatted} (offline)`
         : `Flux BNR conectat • ${exchangeData.currentDateFormatted}`;
     } catch (err) {
       console.error(err);
@@ -189,6 +190,8 @@
   <InflationSection />
 
   <SalarySection />
+
+  <SynthesisSection />
 
   <section class="context-section">
     <div class="context-box">
