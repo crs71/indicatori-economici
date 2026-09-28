@@ -20,6 +20,7 @@
   --transition-smooth: 0.25s ease;
   --font: "Inter", system-ui, -apple-system, sans-serif;
   --header-h: 3.25rem;
+  color-scheme: light dark;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -486,4 +487,33 @@ body {
     scroll-behavior: auto !important;
   }
   .step { transform: none !important; }
+}
+
+/* Temă întunecată — plasată la finalul foii de stil, ca regulile ei să
+   câștige cascada față de regulile de bază (aceeași specificitate, dar
+   apar mai târziu în fișier). Punerea acestui bloc imediat după :root
+   NU funcționează, fiindcă regulile de bază de mai jos l-ar suprascrie. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --bg-card: #1a2436;
+    --bg-muted: #202b40;
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --text-light: #64748b;
+    --border-subtle: #2b3850;
+    --border-strong: #3c4a66;
+    --diff-up-color: #fb7185;
+    --diff-down-color: #34d399;
+    --diff-neutral-color: #94a3b8;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.35);
+    --shadow-md: 0 8px 24px rgba(0,0,0,.45);
+  }
+  .site-header { background: var(--bg); }
+  .step.is-active .step-insight { border-left-color: #60a5fa; background: rgba(37, 99, 235, 0.14); }
+  .rate-delta-badge.up { background: rgba(251, 113, 133, 0.16); }
+  .rate-delta-badge.down { background: rgba(52, 211, 153, 0.16); }
+  .chart-summary:hover { background: var(--border-subtle); }
+  .result-item:hover { background: var(--border-subtle); }
 }
