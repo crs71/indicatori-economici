@@ -97,6 +97,7 @@ export async function getInterestRateData() {
   try {
     const res = await fetch('/api/dobanda', {
       headers: { Accept: 'application/xml, text/xml' },
+      signal: AbortSignal.timeout(10000),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status} la /api/dobanda`);
     const xmlText = await res.text();

@@ -48,8 +48,17 @@ function parsePivotCsv(text) {
  * Preia o serie lunară dintr-o matrice INS TEMPO, pentru o singură categorie
  * (ex. "TOTAL" sau "TOTAL ECONOMIE"), ultimele `monthsBack` luni disponibile.
  */
+// INS poate accepta conexiunea și apoi nu răspunde deloc (observat direct în
+// sesiune — nu doar erori rapide). Fără timeout explicit, fetch() ar aștepta
+// la nesfârșit, iar UI-ul ar rămâne blocat pe "Se încarcă..." în loc să treacă
+// pe datele de rezervă.
+const FETCH_TIMEOUT_MS = 10000;
+
 export async function fetchInsMonthlySeries({ matCode, categoryLabel, monthsBack = 13 }) {
-  const metaRes = await fetch(`/api/ins-meta?matCode=${matCode}`, { headers: { Accept: 'application/json' } });
+  const metaRes = await fetch(`/api/ins-meta?matCode=${matCode}`, {
+    headers: { Accept: 'application/json' },
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
   if (!metaRes.ok) throw new Error(`HTTP ${metaRes.status} la /api/ins-meta (${matCode})`);
   const meta = await metaRes.json();
 
@@ -64,7 +73,10 @@ export async function fetchInsMonthlySeries({ matCode, categoryLabel, monthsBack
   const { matMaxDim, matRegJ, matUMSpec } = meta.details;
   const params = new URLSearchParams({ matCode, encQuery, matMaxDim, matRegJ, matUMSpec });
 
-  const pivotRes = await fetch(`/api/ins-pivot?${params}`, { headers: { Accept: 'text/plain' } });
+  const pivotRes = await fetch(`/api/ins-pivot?${params}`, {
+    headers: { Accept: 'text/plain' },
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
   if (!pivotRes.ok) throw new Error(`HTTP ${pivotRes.status} la /api/ins-pivot (${matCode})`);
   const csvText = await pivotRes.text();
 
