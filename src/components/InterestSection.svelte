@@ -70,7 +70,7 @@
   {#if data && translations}
     <div class="indicator-grid reveal-on-scroll" use:scrollReveal={{ delay: 120 }}>
       <div class="calculator-card">
-        <div class="rate-hero">
+        <div class="rate-hero" aria-live="polite">
           <div class="rate-number-wrap">
             <span class="rate-large tabular">{Math.round($daysTween)}</span>
             <span class="rate-unit">zile fără schimbare</span>
@@ -82,6 +82,7 @@
         <p class="lens-detail">
           <strong>Ultima schimbare:</strong> de la {data.previous.dpm.toFixed(2)}% ({data.previousDateFormatted}) la
           {data.current.dpm.toFixed(2)}% ({data.currentDateFormatted}) — {translations.meta.isNeutral ? 'fără mișcare de atunci' : `o ${translations.meta.directionText} de ${translations.meta.deltaFormatted}`}.
+          {data.isFallback ? `Date de rezervă din ${data.currentDateFormatted} (offline).` : 'Date live de la BNR.'}
         </p>
         {#if contrast}
           <p class="lens-detail">
@@ -130,7 +131,7 @@
               ROBOR/IRCC).
             </p>
             {#key scen.amount}
-              <div class="calc-results-grid">
+              <div class="calc-results-grid" aria-live="polite">
                 <div class="result-item">
                   <span class="result-label">Ritm zilnic la {data.current.dpm.toFixed(2)}%</span>
                   <span class="result-val tabular">{scen.dailyFormatted} / zi</span>

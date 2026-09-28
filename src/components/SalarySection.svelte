@@ -71,7 +71,7 @@
   {#if data && translations}
     <div class="indicator-grid reveal-on-scroll" use:scrollReveal={{ delay: 120 }}>
       <div class="calculator-card">
-        <div class="rate-hero">
+        <div class="rate-hero" aria-live="polite">
           <div class="rate-number-wrap">
             <span class="rate-large tabular">{formatRon($salaryTween)}</span>
             <span class="rate-unit">salariu mediu net / lună</span>
@@ -85,7 +85,7 @@
         <p class="lens-detail">
           Date pentru <strong>{translations.meta.currentLabel}</strong> — rată orară derivată:
           <strong>{translations.meta.hourlyRateFormatted} / oră</strong>.
-          {data.isFallback ? 'Date de rezervă (offline).' : 'Date live de la INS.'}
+          {data.isFallback ? `Date de rezervă din ${data.current.monthLabel} (offline).` : 'Date live de la INS.'}
         </p>
         <div class="chart-header">
           <span>Salariul mediu net, ultimele 13 luni</span>
@@ -125,7 +125,7 @@
               La rata orară derivată din salariul mediu, cam atâtea ore de muncă reprezintă suma de mai sus.
             </p>
             {#key scen.amount}
-              <div class="calc-results-grid">
+              <div class="calc-results-grid" aria-live="polite">
                 <div class="result-item">
                   <span class="result-label">Acum un an</span>
                   <span class="result-val tabular">{scen.hoursYearAgoFormatted ?? '—'}</span>

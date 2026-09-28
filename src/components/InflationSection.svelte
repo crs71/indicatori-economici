@@ -70,7 +70,7 @@
   {#if data && translations}
     <div class="indicator-grid reveal-on-scroll" use:scrollReveal={{ delay: 120 }}>
       <div class="calculator-card">
-        <div class="rate-hero">
+        <div class="rate-hero" aria-live="polite">
           <div class="rate-number-wrap">
             <span class="rate-large tabular">{$rateTween > 0 ? '+' : ''}{$rateTween.toFixed(2)}</span>
             <span class="rate-unit">% față de acum un an</span>
@@ -81,7 +81,7 @@
         </div>
         <p class="lens-detail">
           Date pentru <strong>{translations.meta.currentLabel}</strong>, comparativ cu aceeași lună din anul
-          precedent. {data.isFallback ? 'Date de rezervă (offline).' : 'Date live de la INS.'}
+          precedent. {data.isFallback ? `Date de rezervă din ${data.current.monthLabel} (offline).` : 'Date live de la INS.'}
         </p>
         <div class="chart-header">
           <span>Inflație anuală, ultimele 12 luni (%)</span>
@@ -122,7 +122,7 @@
               {translations.meta.currentRate.toFixed(2)}%.
             </p>
             {#key scen.amount}
-              <div class="calc-results-grid">
+              <div class="calc-results-grid" aria-live="polite">
                 <div class="result-item">
                   <span class="result-label">Acum un an</span>
                   <span class="result-val tabular">{scen.lastYearFormatted}</span>
