@@ -9,6 +9,7 @@
   import InflationSection from './components/InflationSection.svelte';
   import SalarySection from './components/SalarySection.svelte';
   import SynthesisSection from './components/SynthesisSection.svelte';
+  import SourcesSection from './components/SourcesSection.svelte';
 
   let exchangeData = $state(null);
   let activeCurrency = $state('EUR');
@@ -229,6 +230,8 @@
   <SalarySection />
 
   <SynthesisSection />
+
+  <SourcesSection />
 
   <section class="context-section">
     <div class="context-box">

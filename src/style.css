@@ -370,6 +370,25 @@ body {
 .skeleton-line.short { width: 65%; }
 .skeleton-chart { height: 90px; width: 100%; margin: 1rem 0; }
 
+.sources-list {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-top: 1.5rem;
+}
+@media (max-width: 900px) {
+  .sources-list { grid-template-columns: 1fr; }
+}
+.source-item { padding: 1.5rem; }
+.source-meta {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;
+  margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--border-subtle);
+  font-size: 0.8rem;
+}
+.source-cadence { color: var(--text-muted); }
+.source-link {
+  color: var(--accent-blue); text-decoration: none; font-weight: 600;
+  transition: opacity 0.2s ease;
+}
+.source-link:hover { opacity: 0.75; text-decoration: underline; }
+
 .context-section { max-width: 720px; margin: 0 auto 3rem; padding: 0 1.5rem; }
 .context-box { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem; }
 .context-title { margin: 0 0 0.75rem; font-size: 1.1rem; }
