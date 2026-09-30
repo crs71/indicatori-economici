@@ -224,7 +224,7 @@
     </div>
   </details>
 
-  <div class="lens-container {lensPulse.value ? 'is-updating' : ''}">
+  <div class="lens-container {lensPulse.value ? 'is-updating' : ''}" aria-live="polite">
     <span class="lens-label">{lensSpec.label}</span>
     <div class="lens-main-val tabular">{lensValueDisplay}</div>
     <p class="lens-detail">{lensSpec.detail}</p>

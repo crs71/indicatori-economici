@@ -33,7 +33,7 @@ export async function getSalaryData() {
   let isFallback = false;
 
   try {
-    history = await fetchInsMonthlySeries({ matCode: 'FOM106G', categoryLabel: 'TOTAL ECONOMIE' });
+    history = await fetchInsMonthlySeries({ matCode: 'FOM106G', categoryLabel: 'TOTAL ECONOMIE', monthsBack: 25 });
   } catch (err) {
     console.warn('Nu s-au putut prelua datele live INS (salariu). Se utilizează datele de rezervă:', err);
     history = [...FALLBACK_HISTORY];

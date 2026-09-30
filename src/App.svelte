@@ -8,12 +8,16 @@
   import InterestSection from './components/InterestSection.svelte';
   import InflationSection from './components/InflationSection.svelte';
   import SalarySection from './components/SalarySection.svelte';
+  import SynthesisSection from './components/SynthesisSection.svelte';
+  import UnemploymentSection from './components/UnemploymentSection.svelte';
+  import SourcesSection from './components/SourcesSection.svelte';
 
   let exchangeData = $state(null);
   let activeCurrency = $state('EUR');
   let currentStepId = $state('step-intro');
   let statusText = $state('Conectare flux oficial BNR...');
   let scrollPct = $state(0);
+  let isRetrying = $state(false);
 
   let currData = $derived(exchangeData?.currencies?.[activeCurrency] ?? null);
   let translationsData = $derived.by(() => {
@@ -21,7 +25,23 @@
     return generateStudentTranslations(activeCurrency, currData, exchangeData);
   });
 
-  onMount(async () => {
+  async function loadExchangeData() {
+    isRetrying = exchangeData !== null;
+    if (isRetrying) statusText = 'Se reîncearcă conectarea la BNR...';
+    try {
+      exchangeData = await getExchangeRateData();
+      statusText = exchangeData.isFallback
+        ? `Date de rezervă din ${exchangeData.currentDateFormatted} (offline)`
+        : `Flux BNR conectat • ${exchangeData.currentDateFormatted}`;
+    } catch (err) {
+      console.error(err);
+      statusText = 'Eroare la încărcarea datelor';
+    } finally {
+      isRetrying = false;
+    }
+  }
+
+  onMount(() => {
     const onScroll = () => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -30,15 +50,25 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
 
-    try {
-      exchangeData = await getExchangeRateData();
-      statusText = exchangeData.isFallback
-        ? 'Date oficiale recente (mod offline)'
-        : `Flux BNR conectat • ${exchangeData.currentDateFormatted}`;
-    } catch (err) {
-      console.error(err);
-      statusText = 'Eroare la încărcarea datelor';
+    // La un load complet nou, browser-ul încearcă să sară la ancora din URL
+    // (#dobanda, #inflatie etc.) înainte ca Svelte să monteze conținutul, deci
+    // ratează ținta. O reluăm manual după ce elementele există în DOM — repetat
+    // de câteva ori, fiindcă secțiunile de mai sus își încarcă datele asincron
+    // (schelet → conținut real) și pot împinge ținta mai jos pe pagină între timp.
+    if (window.location.hash) {
+      const hash = window.location.hash;
+      let attempts = 0;
+      const tryScroll = () => {
+        const target = document.querySelector(hash);
+        if (!target) return;
+        target.scrollIntoView();
+        attempts += 1;
+        if (attempts < 6) setTimeout(tryScroll, 300);
+      };
+      requestAnimationFrame(tryScroll);
     }
+
+    loadExchangeData();
 
     return () => window.removeEventListener('scroll', onScroll);
   });
@@ -55,12 +85,22 @@
     <div class="header-status">
       <span class="status-indicator"></span>
       <span>{statusText}</span>
+      {#if exchangeData?.isFallback}
+        <button
+          type="button"
+          class="retry-btn"
+          onclick={loadExchangeData}
+          disabled={isRetrying}
+          aria-label="Reîncearcă conectarea la fluxul BNR"
+          title="Reîncearcă conectarea la fluxul BNR"
+        >↻</button>
+      {/if}
     </div>
   </div>
 </header>
 
 <main>
-  <section class="intro-section">
+  <section class="intro-section" id="curs">
     <span class="eyebrow">Cibernetică Economică • Portofoliu Personal</span>
     <h1 class="intro-title">Ce înseamnă cursul valutar când ești student?</h1>
     <p class="intro-lead">
@@ -189,6 +229,12 @@
   <InflationSection />
 
   <SalarySection />
+
+  <SynthesisSection />
+
+  <UnemploymentSection />
+
+  <SourcesSection />
 
   <section class="context-section">
     <div class="context-box">

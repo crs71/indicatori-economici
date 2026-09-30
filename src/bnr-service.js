@@ -114,6 +114,7 @@ export async function getExchangeRateData() {
   try {
     const res = await fetch('/api/curs', {
       headers: { Accept: 'application/xml, text/xml' },
+      signal: AbortSignal.timeout(10000),
     });
 
     if (!res.ok) {

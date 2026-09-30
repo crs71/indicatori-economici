@@ -10,10 +10,12 @@
   } from '../salary-translations.js';
   import { formatRon } from '../translations.js';
   import Sparkline from './Sparkline.svelte';
+  import IndicatorSkeleton from './IndicatorSkeleton.svelte';
   import { scrollReveal } from '../scrollReveal.js';
 
   let data = $state(null);
   let loadError = $state(false);
+  let isRetrying = $state(false);
   let amounts = $state(Object.fromEntries(SALARY_SCENARIOS.map((s) => [s.id, s.defaultAmount])));
 
   let translations = $derived.by(() => (data ? generateSalaryTranslations(data) : null));
@@ -47,17 +49,23 @@
     if (data) salaryTween.set(data.current.value);
   });
 
-  onMount(async () => {
+  async function load() {
+    isRetrying = data !== null || loadError;
+    loadError = false;
     try {
       data = await getSalaryData();
     } catch (err) {
       console.error(err);
       loadError = true;
+    } finally {
+      isRetrying = false;
     }
-  });
+  }
+
+  onMount(load);
 </script>
 
-<section class="indicator-section">
+<section class="indicator-section" id="salariu">
   <div class="intro-section reveal-on-scroll" use:scrollReveal>
     <span class="eyebrow">Al patrulea indicator • Piața muncii</span>
     <h2 class="intro-title">Câte ore de muncă costă o cheltuială, azi față de acum un an?</h2>
@@ -71,7 +79,7 @@
   {#if data && translations}
     <div class="indicator-grid reveal-on-scroll" use:scrollReveal={{ delay: 120 }}>
       <div class="calculator-card">
-        <div class="rate-hero">
+        <div class="rate-hero" aria-live="polite">
           <div class="rate-number-wrap">
             <span class="rate-large tabular">{formatRon($salaryTween)}</span>
             <span class="rate-unit">salariu mediu net / lună</span>
@@ -85,7 +93,12 @@
         <p class="lens-detail">
           Date pentru <strong>{translations.meta.currentLabel}</strong> — rată orară derivată:
           <strong>{translations.meta.hourlyRateFormatted} / oră</strong>.
-          {data.isFallback ? 'Date de rezervă (offline).' : 'Date live de la INS.'}
+          {data.isFallback ? `Date de rezervă din ${data.current.monthLabel} (offline).` : 'Date live de la INS.'}
+          {#if data.isFallback}
+            <button type="button" class="retry-btn" onclick={load} disabled={isRetrying}>
+              {isRetrying ? 'Se reîncearcă...' : '↻ Reîncearcă'}
+            </button>
+          {/if}
         </p>
         <div class="chart-header">
           <span>Salariul mediu net, ultimele 13 luni</span>
@@ -125,7 +138,7 @@
               La rata orară derivată din salariul mediu, cam atâtea ore de muncă reprezintă suma de mai sus.
             </p>
             {#key scen.amount}
-              <div class="calc-results-grid">
+              <div class="calc-results-grid" aria-live="polite">
                 <div class="result-item">
                   <span class="result-label">Acum un an</span>
                   <span class="result-val tabular">{scen.hoursYearAgoFormatted ?? '—'}</span>
@@ -148,8 +161,13 @@
       </div>
     </div>
   {:else if loadError}
-    <p class="calc-subtitle" style="text-align:center;">Eroare la încărcarea datelor salariale (INS).</p>
+    <p class="calc-subtitle" style="text-align:center;">
+      Eroare la încărcarea datelor salariale (INS).
+      <button type="button" class="retry-btn" onclick={load} disabled={isRetrying}>
+        {isRetrying ? 'Se reîncearcă...' : '↻ Reîncearcă'}
+      </button>
+    </p>
   {:else}
-    <p class="calc-subtitle" style="text-align:center;">Se încarcă datele salariale (INS)...</p>
+    <IndicatorSkeleton resultCount={3} />
   {/if}
 </section>

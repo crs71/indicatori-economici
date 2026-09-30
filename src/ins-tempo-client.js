@@ -48,8 +48,17 @@ function parsePivotCsv(text) {
  * Preia o serie lunară dintr-o matrice INS TEMPO, pentru o singură categorie
  * (ex. "TOTAL" sau "TOTAL ECONOMIE"), ultimele `monthsBack` luni disponibile.
  */
+// INS poate accepta conexiunea și apoi nu răspunde deloc (observat direct în
+// sesiune — nu doar erori rapide). Fără timeout explicit, fetch() ar aștepta
+// la nesfârșit, iar UI-ul ar rămâne blocat pe "Se încarcă..." în loc să treacă
+// pe datele de rezervă.
+const FETCH_TIMEOUT_MS = 10000;
+
 export async function fetchInsMonthlySeries({ matCode, categoryLabel, monthsBack = 13 }) {
-  const metaRes = await fetch(`/api/ins-meta?matCode=${matCode}`, { headers: { Accept: 'application/json' } });
+  const metaRes = await fetch(`/api/ins-meta?matCode=${matCode}`, {
+    headers: { Accept: 'application/json' },
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
   if (!metaRes.ok) throw new Error(`HTTP ${metaRes.status} la /api/ins-meta (${matCode})`);
   const meta = await metaRes.json();
 
@@ -64,7 +73,59 @@ export async function fetchInsMonthlySeries({ matCode, categoryLabel, monthsBack
   const { matMaxDim, matRegJ, matUMSpec } = meta.details;
   const params = new URLSearchParams({ matCode, encQuery, matMaxDim, matRegJ, matUMSpec });
 
-  const pivotRes = await fetch(`/api/ins-pivot?${params}`, { headers: { Accept: 'text/plain' } });
+  const pivotRes = await fetch(`/api/ins-pivot?${params}`, {
+    headers: { Accept: 'text/plain' },
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
+  if (!pivotRes.ok) throw new Error(`HTTP ${pivotRes.status} la /api/ins-pivot (${matCode})`);
+  const csvText = await pivotRes.text();
+
+  const rows = parsePivotCsv(csvText);
+  if (!rows.length) throw new Error(`Nu s-au putut extrage date din răspunsul INS (${matCode})`);
+  return rows;
+}
+
+/**
+ * Variantă pentru matrici INS cu mai multe dimensiuni de categorie înainte de
+ * cea de luni — de ex. rata șomajului BIM (AMG157H), care are simultan
+ * "grupe de vârstă" ȘI "sexe" ca dimensiuni separate, nu doar una ca la
+ * inflație/salariu. `categoryLabels` conține eticheta de ales pentru fiecare
+ * dimensiune de categorie, în ordinea din `meta.dimensionsMap` — dimensiunea
+ * de luni e detectată automat (opțiuni de forma "Luna ..."), la fel și cea
+ * de unitate de măsură, dacă are o singură opțiune posibilă.
+ */
+export async function fetchInsMonthlySeriesMulti({ matCode, categoryLabels, monthsBack = 13 }) {
+  const metaRes = await fetch(`/api/ins-meta?matCode=${matCode}`, {
+    headers: { Accept: 'application/json' },
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
+  if (!metaRes.ok) throw new Error(`HTTP ${metaRes.status} la /api/ins-meta (${matCode})`);
+  const meta = await metaRes.json();
+
+  const dims = meta.dimensionsMap;
+  const monthsDimIndex = dims.findIndex((d) => d.options.some((o) => /^Luna\s/i.test(o.label.trim())));
+  if (monthsDimIndex === -1) throw new Error(`Nu s-a găsit dimensiunea de luni pentru ${matCode}`);
+  const months = dims[monthsDimIndex].options.slice(-monthsBack);
+  if (!months.length) throw new Error(`Structură matrice INS neașteptată pentru ${matCode}`);
+
+  let labelIdx = 0;
+  const dimSelections = dims.map((dim, i) => {
+    if (i === monthsDimIndex) return months.map((m) => m.nomItemId).join(',');
+    if (dim.options.length === 1) return dim.options[0].nomItemId;
+    const label = categoryLabels[labelIdx++];
+    const opt = dim.options.find((o) => o.label.trim() === label);
+    if (!opt) throw new Error(`Categoria "${label}" nu există în dimensiunea "${dim.label}" (${matCode})`);
+    return opt.nomItemId;
+  });
+
+  const encQuery = dimSelections.join(':');
+  const { matMaxDim, matRegJ, matUMSpec } = meta.details;
+  const params = new URLSearchParams({ matCode, encQuery, matMaxDim, matRegJ, matUMSpec });
+
+  const pivotRes = await fetch(`/api/ins-pivot?${params}`, {
+    headers: { Accept: 'text/plain' },
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
   if (!pivotRes.ok) throw new Error(`HTTP ${pivotRes.status} la /api/ins-pivot (${matCode})`);
   const csvText = await pivotRes.text();
 

@@ -63,7 +63,7 @@
         oninput={(e) => setAmount(parseFloat(e.target.value) || 0)}
       />
     </div>
-    <div class="calc-results-grid">
+    <div class="calc-results-grid" aria-live="polite">
       <div class="result-item">
         <span class="result-label">Cost la startul celor 10 zile</span>
         <span class="result-val tabular">{impact?.costStart ?? '—'}</span>

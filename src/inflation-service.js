@@ -29,7 +29,7 @@ export async function getInflationData() {
   let isFallback = false;
 
   try {
-    history = await fetchInsMonthlySeries({ matCode: 'IPC102E', categoryLabel: 'TOTAL' });
+    history = await fetchInsMonthlySeries({ matCode: 'IPC102E', categoryLabel: 'TOTAL', monthsBack: 20 });
   } catch (err) {
     console.warn('Nu s-au putut prelua datele live INS (inflație). Se utilizează datele de rezervă:', err);
     history = [...FALLBACK_HISTORY];
