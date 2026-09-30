@@ -9,10 +9,12 @@
     calculateInflationImpact,
   } from '../inflation-translations.js';
   import Sparkline from './Sparkline.svelte';
+  import IndicatorSkeleton from './IndicatorSkeleton.svelte';
   import { scrollReveal } from '../scrollReveal.js';
 
   let data = $state(null);
   let loadError = $state(false);
+  let isRetrying = $state(false);
   let amounts = $state(Object.fromEntries(INFLATION_SCENARIOS.map((s) => [s.id, s.defaultAmount])));
 
   let translations = $derived.by(() => (data ? generateInflationTranslations(data) : null));
@@ -46,17 +48,23 @@
     if (data) rateTween.set(data.currentRate);
   });
 
-  onMount(async () => {
+  async function load() {
+    isRetrying = data !== null || loadError;
+    loadError = false;
     try {
       data = await getInflationData();
     } catch (err) {
       console.error(err);
       loadError = true;
+    } finally {
+      isRetrying = false;
     }
-  });
+  }
+
+  onMount(load);
 </script>
 
-<section class="indicator-section">
+<section class="indicator-section" id="inflatie">
   <div class="intro-section reveal-on-scroll" use:scrollReveal>
     <span class="eyebrow">Al treilea indicator • Inflație</span>
     <h2 class="intro-title">Cât mai scump e coșul tău față de acum un an?</h2>
@@ -82,6 +90,11 @@
         <p class="lens-detail">
           Date pentru <strong>{translations.meta.currentLabel}</strong>, comparativ cu aceeași lună din anul
           precedent. {data.isFallback ? `Date de rezervă din ${data.current.monthLabel} (offline).` : 'Date live de la INS.'}
+          {#if data.isFallback}
+            <button type="button" class="retry-btn" onclick={load} disabled={isRetrying}>
+              {isRetrying ? 'Se reîncearcă...' : '↻ Reîncearcă'}
+            </button>
+          {/if}
         </p>
         <div class="chart-header">
           <span>Inflație anuală, ultimele 12 luni (%)</span>
@@ -142,8 +155,13 @@
       </div>
     </div>
   {:else if loadError}
-    <p class="calc-subtitle" style="text-align:center;">Eroare la încărcarea datelor de inflație (INS).</p>
+    <p class="calc-subtitle" style="text-align:center;">
+      Eroare la încărcarea datelor de inflație (INS).
+      <button type="button" class="retry-btn" onclick={load} disabled={isRetrying}>
+        {isRetrying ? 'Se reîncearcă...' : '↻ Reîncearcă'}
+      </button>
+    </p>
   {:else}
-    <p class="calc-subtitle" style="text-align:center;">Se încarcă datele de inflație (INS)...</p>
+    <IndicatorSkeleton resultCount={3} />
   {/if}
 </section>

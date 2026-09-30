@@ -10,12 +10,14 @@
     compareToExchangeRateVolatility,
   } from '../interest-translations.js';
   import InterestStaircase from './InterestStaircase.svelte';
+  import IndicatorSkeleton from './IndicatorSkeleton.svelte';
   import { scrollReveal } from '../scrollReveal.js';
 
   let { eurHistory } = $props();
 
   let data = $state(null);
   let loadError = $state(false);
+  let isRetrying = $state(false);
   let amounts = $state(Object.fromEntries(INTEREST_SCENARIOS.map((s) => [s.id, s.defaultAmount])));
 
   let translations = $derived.by(() => (data ? generateInterestTranslations(data) : null));
@@ -46,17 +48,23 @@
     if (translations) daysTween.set(translations.meta.daysSinceChange);
   });
 
-  onMount(async () => {
+  async function load() {
+    isRetrying = data !== null || loadError;
+    loadError = false;
     try {
       data = await getInterestRateData();
     } catch (err) {
       console.error(err);
       loadError = true;
+    } finally {
+      isRetrying = false;
     }
-  });
+  }
+
+  onMount(load);
 </script>
 
-<section class="indicator-section">
+<section class="indicator-section" id="dobanda">
   <div class="intro-section reveal-on-scroll" use:scrollReveal>
     <span class="eyebrow">Al doilea indicator • Politică monetară</span>
     <h2 class="intro-title">Câte zile a stat pe loc rata BNR?</h2>
@@ -83,6 +91,11 @@
           <strong>Ultima schimbare:</strong> de la {data.previous.dpm.toFixed(2)}% ({data.previousDateFormatted}) la
           {data.current.dpm.toFixed(2)}% ({data.currentDateFormatted}) — {translations.meta.isNeutral ? 'fără mișcare de atunci' : `o ${translations.meta.directionText} de ${translations.meta.deltaFormatted}`}.
           {data.isFallback ? `Date de rezervă din ${data.currentDateFormatted} (offline).` : 'Date live de la BNR.'}
+          {#if data.isFallback}
+            <button type="button" class="retry-btn" onclick={load} disabled={isRetrying}>
+              {isRetrying ? 'Se reîncearcă...' : '↻ Reîncearcă'}
+            </button>
+          {/if}
         </p>
         {#if contrast}
           <p class="lens-detail">
@@ -147,8 +160,13 @@
       </div>
     </div>
   {:else if loadError}
-    <p class="calc-subtitle" style="text-align:center;">Eroare la încărcarea ratelor dobânzii BNR.</p>
+    <p class="calc-subtitle" style="text-align:center;">
+      Eroare la încărcarea ratelor dobânzii BNR.
+      <button type="button" class="retry-btn" onclick={load} disabled={isRetrying}>
+        {isRetrying ? 'Se reîncearcă...' : '↻ Reîncearcă'}
+      </button>
+    </p>
   {:else}
-    <p class="calc-subtitle" style="text-align:center;">Se încarcă ratele dobânzii BNR...</p>
+    <IndicatorSkeleton resultCount={2} />
   {/if}
 </section>

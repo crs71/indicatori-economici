@@ -9,6 +9,7 @@
   let inflation = $state(null);
   let salary = $state(null);
   let loadError = $state(false);
+  let isRetrying = $state(false);
 
   let realGrowth = $derived.by(() => {
     if (!inflation || !salary?.growthPct) return null;
@@ -28,17 +29,23 @@
     return `${val > 0 ? '+' : ''}${val.toFixed(1).replace('.', ',')}%`;
   }
 
-  onMount(async () => {
+  async function load() {
+    isRetrying = inflation !== null || loadError;
+    loadError = false;
     try {
       [inflation, salary] = await Promise.all([getInflationData(), getSalaryData()]);
     } catch (err) {
       console.error(err);
       loadError = true;
+    } finally {
+      isRetrying = false;
     }
-  });
+  }
+
+  onMount(load);
 </script>
 
-<section class="indicator-section">
+<section class="indicator-section" id="sinteza">
   <div class="intro-section reveal-on-scroll" use:scrollReveal>
     <span class="eyebrow">Sinteză • Puterea reală de cumpărare</span>
     <h2 class="intro-title">Câștigi mai mult, sau doar mai mulți lei care valorează mai puțin?</h2>
@@ -79,11 +86,32 @@
           ecuații: cursul afectează costul produselor importate (deci și inflația), iar dobânda determină cât de
           avantajos e să economisești banii care-ți rămân.
         </p>
+        {#if inflation.isFallback || salary.isFallback}
+          <p class="lens-detail" style="margin: 0.5rem 0 0;">
+            O parte din datele folosite mai sus sunt de rezervă (offline).
+            <button type="button" class="retry-btn" onclick={load} disabled={isRetrying}>
+              {isRetrying ? 'Se reîncearcă...' : '↻ Reîncearcă'}
+            </button>
+          </p>
+        {/if}
       </div>
     </div>
   {:else if loadError}
-    <p class="calc-subtitle" style="text-align:center;">Eroare la calculul sintezei (necesită date de inflație și salariu).</p>
+    <p class="calc-subtitle" style="text-align:center;">
+      Eroare la calculul sintezei (necesită date de inflație și salariu).
+      <button type="button" class="retry-btn" onclick={load} disabled={isRetrying}>
+        {isRetrying ? 'Se reîncearcă...' : '↻ Reîncearcă'}
+      </button>
+    </p>
   {:else}
-    <p class="calc-subtitle" style="text-align:center;">Se calculează sinteza...</p>
+    <div class="reveal-on-scroll" style="max-width: 700px; margin: 1.5rem auto 0;">
+      <div class="calculator-card">
+        <div class="skeleton skeleton-hero"></div>
+        <div class="skeleton skeleton-badge"></div>
+        <div class="skeleton skeleton-line" style="margin-top: 1rem;"></div>
+        <div class="skeleton skeleton-line"></div>
+        <div class="skeleton skeleton-line short"></div>
+      </div>
+    </div>
   {/if}
 </section>
