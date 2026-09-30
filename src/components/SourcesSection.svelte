@@ -30,6 +30,13 @@
       cadence: 'Lunar, cu decalaj de câteva săptămâni față de luna raportată',
       url: 'https://insse.ro/',
     },
+    {
+      title: 'Rata șomajului (BIM)',
+      source: 'Institutul Național de Statistică — TEMPO Online, matricea AMG157H',
+      detail: 'Grupele de vârstă "15-74 ani" (generală) și "15-24 ani" (tineri), serie ajustată sezonier.',
+      cadence: 'Lunar (seria pentru tineri, cu eșantion mai mic, poate avea decalaj suplimentar)',
+      url: 'https://insse.ro/',
+    },
   ];
 </script>
 
@@ -38,7 +45,7 @@
     <span class="eyebrow">Surse • Metodologie</span>
     <h2 class="intro-title">De unde vin cifrele?</h2>
     <p class="intro-lead">
-      Toate cele patru serii sunt publice, oficiale, și preluate live de fiecare dată când deschizi pagina — nu
+      Toate cele cinci serii sunt publice, oficiale, și preluate live de fiecare dată când deschizi pagina — nu
       sunt introduse manual. Când o sursă e temporar indisponibilă, aplicația trece automat pe cea mai recentă
       valoare oficială cunoscută și marchează explicit acest lucru ("date de rezervă / offline").
     </p>

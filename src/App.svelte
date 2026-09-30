@@ -9,6 +9,7 @@
   import InflationSection from './components/InflationSection.svelte';
   import SalarySection from './components/SalarySection.svelte';
   import SynthesisSection from './components/SynthesisSection.svelte';
+  import UnemploymentSection from './components/UnemploymentSection.svelte';
   import SourcesSection from './components/SourcesSection.svelte';
 
   let exchangeData = $state(null);
@@ -230,6 +231,8 @@
   <SalarySection />
 
   <SynthesisSection />
+
+  <UnemploymentSection />
 
   <SourcesSection />
 
